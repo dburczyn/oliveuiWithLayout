@@ -12,6 +12,8 @@
     var token = document.createElement('input');
     var url = document.createElement('input');
     var type = document.createElement('select');
+    var configform = document.createElement('form');
+    console.log("moduly z configa" + OliveUI.modules.new_brokerage_object_grid_widget_js_modules);
     return {
       getContent: function () {
         config.indexurl = $(url).val();
@@ -27,7 +29,8 @@
         $(type).val(content.type);
       },
       render: function () {
-        return $('<form/>')
+        var returnedcondfigform =
+          $(configform)
           .addClass("form-style-5")
           .append(
             $('<p/>')
@@ -55,36 +58,18 @@
           ).append(
             $('<p/>')
             .text("Widget type:")
-          )
-          .append(
-            $(type)
-            .append(
-              $("<option>")
-              .attr("value", "JobTile")
-              .text("JobTile")
-            )
-            .append(
-              $(type)
-              .append(
-                $("<option>")
-                .attr("value", "EventTile")
-                .text("EventTile")
-
-              )
-            )
-            .append(
-              $(type)
-              .append(
-                $("<option>")
-                .attr("value", "TrainingTile")
-                .text("TrainingTile")
-
-              )
-            )
-
-
-
           );
+        OliveUI.modules.new_brokerage_object_grid_widget_js_modules.forEach(element => {
+          returnedcondfigform
+            .append(
+              $(type)
+              .append(
+                $("<option>")
+                .attr("value", element.type)
+                .text(element.type)
+              ));
+        });
+        return returnedcondfigform;
       },
     };
   };

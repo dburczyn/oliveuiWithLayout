@@ -32,5 +32,4 @@
       }
     };
   };
-  console.log(OliveUI.modules.new_brokerage_object_grid_widget_js);
 }(jQuery, OliveUI, CodeMirror));

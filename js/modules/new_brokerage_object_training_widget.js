@@ -1,7 +1,6 @@
 (function ($, OliveUI) {
   OliveUI.modules.new_brokerage_object_training_widget = function (config = {}) {
     config.height = config.minHeight || 100;
-    var grid = OliveUI.modules.new_brokerage_object_grid_widget_js();
     'use strict';
     var trainingStatics = {
       bgcolor: "#c5dee7",
