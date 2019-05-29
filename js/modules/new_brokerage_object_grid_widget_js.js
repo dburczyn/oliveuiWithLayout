@@ -21,6 +21,8 @@
       var grid = {
         type: "Grid",
         render: function (gridrendercontent) {
+          if(typeof gridrendercontent.indexurl !=='undefined' && typeof gridrendercontent.indexfilename !=='undefined' && gridrendercontent.indexurl !=='' && gridrendercontent.indexfilename !==''  )
+          {
           var getDataAjax = $.ajax({
               url: gridrendercontent.indexurl + "/" + gridrendercontent.indexfilename,
               beforeSend: setAuthHeader.bind(gridrendercontent),
@@ -47,6 +49,7 @@
                 alert("invalid authorization token - provide valid token for admin mode or no token for guestuser mode");
               }
             });
+          }
           widgetlist = [];
           OliveUI.modules.new_brokerage_object_grid_widget_js_modules.forEach(function (i) {
             widgetlist.push(i);
