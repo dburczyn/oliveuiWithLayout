@@ -21,7 +21,7 @@
     var trainingtileinstance;
     var widgetRepresentation;
     var newbuttoncontainer = document.createElement('div');
-    var filecontentfield = document.createElement('input');
+    var filecontentfield = document.createElement('textarea');
     var trainingpicturefield = document.createElement('input');
     var emailaddressfield = document.createElement('input');
     var createdatfield = document.createElement('input');
@@ -73,6 +73,9 @@
       return widgetInstanceContent;
     }
     function makeCreateForm() {
+      $(document).ready(function() {
+        $('#summernote').summernote();
+      });
       $(modalcontainer).empty();
       $(modalcontainer).append(
         $(createform)
@@ -130,7 +133,8 @@
                 )
                 .append(
                   $(filecontentfield)
-                  .attr("type", "text")
+                  .attr("id", "summernote")
+                  .attr("name", "editordata")
                 )
                 .append(
                   $('<p/>')
@@ -300,10 +304,7 @@
                 })
                 .text(unencodedcontent.datetype)
               )
-              .append(
-                $("<p/>")
-                .text(unencodedcontent.description)
-              )
+              .append(unencodedcontent.description)
               .append(
                 $("<p/>")
                 .append(

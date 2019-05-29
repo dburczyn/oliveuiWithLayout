@@ -227,6 +227,6 @@
         });
       }
       return grid;
-    };
+    }
     OliveUI.modules.new_brokerage_object_grid_widget_js_modules = [];
   }(jQuery, OliveUI));
