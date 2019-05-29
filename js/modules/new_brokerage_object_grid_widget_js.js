@@ -6,6 +6,7 @@
       var indexedListNames = [];
       var indexListobjToUpdate = {};
       indexListobjToUpdate.list = [];
+      indexListobjToUpdate.ignoredlist = [];
       var functionnames = [];
       var resultsJSON = [];
       var unencodedcontent;
@@ -33,10 +34,10 @@
             })
             .fail(function (jqXHR, textStatus, errorThrown) {
               if (jqXHR.status == '404') {
-                alert("didnt find existing indexlit, creating new if proper authorization token provided...");
+                alert("didnt find existing indexlist, creating new if proper authorization token provided...");
                 resultsJSON = [];
                 var response = {};
-                response.content = btoa('{"list":[]}');
+                response.content = btoa('{"list":[],"ignoredlist":[]}');
                 produceWidgetContent.call(null, response);
                 if ((typeof gridrendercontent.token !== 'undefined') && (gridrendercontent.token != "") && (gridrendercontent.token != "defaulttoken")) {
                   getListOfObjects(gridrendercontent); // used fo r creation/update of indexlist - only for admin = authenticated users
@@ -130,14 +131,16 @@
         namesToAddToList = widgetFileNames.diff(indexedListNames);
         var differingRecordsRequests = [];
         namesToAddToList.forEach(function (nameToAddToList) {
-          var request = $.ajax({
-            url: gridinstance.indexurl + '/' + nameToAddToList,
-            beforeSend: setAuthHeader.bind(gridinstance),
-            dataType: 'json'
-          }).done(function (response) {
-            prepareUpdateList(response);
-          });
-          differingRecordsRequests.push(request);
+          if (unencodedcontent.ignoredlist.indexOf(nameToAddToList) == -1) {
+            var request = $.ajax({
+              url: gridinstance.indexurl + '/' + nameToAddToList,
+              beforeSend: setAuthHeader.bind(gridinstance),
+              dataType: 'json'
+            }).done(function (response) {
+              prepareUpdateList(response);
+            });
+            differingRecordsRequests.push(request);
+          }
         });
         $.when.apply(null, differingRecordsRequests).done(function () {
           prepareUpdatedIndexlist();
@@ -157,13 +160,17 @@
         } catch (e) {
           console.log(e);
         }
-        indexListobjToUpdate.list.push({
-          createdat: unencodedcontentdiff.createdat,
-          updatedat: unencodedcontentdiff.updatedat,
-          datetype: unencodedcontentdiff.datetype,
-          name: unencodedcontentdiff.name,
-          type: unencodedcontentdiff.type
-        });
+        if (typeof unencodedcontentdiff.createdat !== 'undefined' && typeof unencodedcontentdiff.updatedat !== 'undefined' && typeof unencodedcontentdiff.datetype !== 'undefined' && typeof unencodedcontentdiff.name !== 'undefined' && typeof unencodedcontentdiff.type !== 'undefined') {
+          indexListobjToUpdate.list.push({
+            createdat: unencodedcontentdiff.createdat,
+            updatedat: unencodedcontentdiff.updatedat,
+            datetype: unencodedcontentdiff.datetype,
+            name: unencodedcontentdiff.name,
+            type: unencodedcontentdiff.type
+          });
+        } else if (indexListobjToUpdate.ignoredlist.indexOf(response.name) == -1) {
+          indexListobjToUpdate.ignoredlist.push(response.name);
+        }
       }
       function removeDuplicates(arr) {
         var unique_array = Array.from(new Set(arr));
@@ -173,6 +180,7 @@
         namesToDeleteFromList = indexedListNames.diff(widgetFileNames);
         updatedIndexList = {};
         updatedIndexList.list = unencodedcontent.list.concat(indexListobjToUpdate.list);
+        updatedIndexList.ignoredlist = unencodedcontent.ignoredlist.concat(indexListobjToUpdate.ignoredlist);
         for (var j = 0; j < namesToDeleteFromList.length; j++) {
           for (var i = 0; i < updatedIndexList.list.length; i++) {
             if (updatedIndexList.list[i].updatedat == namesToDeleteFromList[j]) {
@@ -183,7 +191,7 @@
         updatedIndexList.list = removeDuplicates(updatedIndexList.list); // in case there are duplicated entries
       }
       function pushUpdatedIndexlist(args) {
-        if (!arraysEqual(unencodedcontent.list, updatedIndexList.list)) {
+        if (!arraysEqual(unencodedcontent.list, updatedIndexList.list) || !arraysEqual(unencodedcontent.ignoredlist, updatedIndexList.ignoredlist)) {
           $.ajax({
             url: args.indexurl + '/' + args.indexfilename,
             beforeSend: setAuthHeader.bind(args),

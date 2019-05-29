@@ -13,7 +13,6 @@
     var url = document.createElement('input');
     var type = document.createElement('select');
     var configform = document.createElement('form');
-    console.log("moduly z configa" + OliveUI.modules.new_brokerage_object_grid_widget_js_modules);
     return {
       getContent: function () {
         config.indexurl = $(url).val();
