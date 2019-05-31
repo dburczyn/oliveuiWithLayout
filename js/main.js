@@ -8,66 +8,17 @@
     oliveUI.render()
   );
 
-  var widget1 = oliveUI.createWidgetInstance('Microservice UI');
-  var widget2 = oliveUI.createWidgetInstance('Microservice UI');
-  var widget3 = oliveUI.createWidgetInstance('Javascript Render UI');
-  var widget4 = oliveUI.createWidgetInstance('HTML Render UI');
-  var widget5 = oliveUI.createWidgetInstance('Markdown Render UI');
-  var widget6 = oliveUI.createWidgetInstance('Grid Widget');
-  var widget7 = oliveUI.createWidgetInstance('Grid Widget');
+
+  var widget1 = oliveUI.createWidgetInstance('Grid Widget');
 
 
-
+/// here is the initial configuration of widget instance(s)
   oliveUI.setWidgetInstanceConfiguration(widget1, {
-    microserviceInputs: {
-      'Append Text': {
-        value: 'World'
-      }
-    },
-    microserviceOutputAdaptAlg: '',
-    serviceName: 'Test 1'
-  });
-
-  oliveUI.setWidgetInstanceConfiguration(widget2, {
-    microserviceInputs: {
-      'Append Text': {
-        value: 'Microservice result'
-      }
-    },
-    microserviceOutputAdaptAlg: 'return output.dataText;',
-    serviceName: 'Test 2'
-  });
-
-  oliveUI.setWidgetInstanceConfiguration(widget3, {
-    javascriptAlg: `//You must return a dom object
-return $('<button>This is a javascript generated button</button>').click(function () {
-  alert('Button clicked');
-});`
-  });
-
-  oliveUI.setWidgetInstanceConfiguration(widget4, {
-    html: `<blockquote><b>This is a Bold HTML text</b></blockquote>`
-  });
-
-  oliveUI.setWidgetInstanceConfiguration(widget5, {
-    text: `# This is a markdown text`
-  });
-
-  oliveUI.setWidgetInstanceConfiguration(widget6, {
-    indexurl:"https://api.github.com/repositories/175385549/contents/js",
-    indexfilename:"indexlist2",
-    token:"9e8b86265ce1566de543cb526933266aafe12ac5",
+    indexurl:"https://api.github.com/repos/bocbrokeragetest/brokerage/contents/repodata",
+    indexfilename:"indexlist",
     type:"JobTile"
-
   });
 
-  oliveUI.setWidgetInstanceConfiguration(widget7, {
-    indexurl:"https://api.github.com/repositories/175385549/contents/js",
-    indexfilename:"indexlist2",
-    token:"9e8b86265ce1566de543cb526933266aafe12ac5",
-    type:"EventTile"
-
-  });
 
   var toSave = oliveUI.getContent();
   // console.log(toSave);
@@ -89,5 +40,11 @@ return $('<button>This is a javascript generated button</button>').click(functio
       });
     })
   );
+
+
+  setTimeout(function() {
+    $('.glyphicon-refresh').trigger('click');
+ }, 3000);
+
 
 }(jQuery, OliveUI));

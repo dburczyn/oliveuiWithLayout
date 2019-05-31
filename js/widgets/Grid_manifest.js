@@ -10,7 +10,7 @@
         };
         return {
           render: function () {
-            return _dom.rootDiv;
+                        return _dom.rootDiv;
           },
           setContent: function (content = {}) {
             content = content || '';
@@ -26,6 +26,10 @@
       return _new_brokerage_object_grid_widget();
     },
     createConfigurationUIFn: function () {
+      var _dom = {
+        rootDiv: $('<div>')
+      };
+      _dom.rootDiv.empty();
       return new_brokerage_object_grid_config_js({
       });
     },

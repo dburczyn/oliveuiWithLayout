@@ -1,5 +1,6 @@
   (function ($, OliveUI) {
     OliveUI.modules.new_brokerage_object_grid_widget_js = function (config = {}) {
+
       config.height = config.minHeight || 100;
       'use strict';
       var widgetFileNames = [];
@@ -218,7 +219,15 @@
       }
       function produceWidgetContent(response) {
         listsha = response.sha;
-        unencodedcontent = JSON.parse(atob(response.content));
+        if(response) {
+          try {
+            unencodedcontent = JSON.parse(atob(response.content));
+                    } catch(e) {
+                      unencodedcontent=JSON.parse('{"list":[],"ignoredlist":[]}');
+          }
+      }
+
+
         $.each(unencodedcontent.list, function (i, f) {
           resultsJSON.push(f);
           indexedListNames.push( // used in indexlist creation
