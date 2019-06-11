@@ -46,6 +46,9 @@
         config.pass = $(pass).val();
         config.secret = secret;
         config.client = client;
+        config.isadmin = isadmin;
+
+
         return config;
       },
       setContent: function (content = {}) {
@@ -58,6 +61,7 @@
         $(pass).val(content.pass);
         secret = content.secret;
         client = content.client;
+        isadmin = content.isadmin;
       },
       render: function () {
         var returnedcondfigform =

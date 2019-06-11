@@ -53,11 +53,11 @@
         return newbuttoncontainer;
       },
     };
-    function setWidgetAuthHeader(request) {
-      if (typeof this.token !== 'undefined' && this.token !== '') {
-        request.setRequestHeader("Authorization", "token " + this.token);
-      }
-    }
+    // function setWidgetAuthHeader(request) {
+    //   if (typeof this.token !== 'undefined' && this.token !== '') {
+    //     request.setRequestHeader("Authorization", "token " + this.token);
+    //   }
+    // }
     function getJobtypeFromRadio() {
       var jobtypesradio = document.getElementsByName('jobtype');
       for (var i = 0; i < jobtypesradio.length; i++) {
@@ -244,7 +244,12 @@
     function deleteWidgetContentFile(gridrendercontent) {
       $.ajax({
           url: prepareDeleteWidgetContentUrl(gridrendercontent),
-          beforeSend: setWidgetAuthHeader.bind(gridrendercontent),
+          beforeSend: function (xhr) {
+            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
+            {
+            xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+            }
+          },
           type: 'DELETE',
           data: '{"message": "delete file","sha":"' + currentresponse.sha + '" }',
         })
@@ -267,7 +272,12 @@
       produceWidgetInstanceContent();
       $.ajax({
           url: prepareCreateWidgetContentUrl(gridrendercontent),
-          beforeSend: setWidgetAuthHeader.bind(gridrendercontent),
+          beforeSend: function (xhr) {
+            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
+            {
+            xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+            }
+          },
           type: 'PUT',
           data: '{"message": "create file","content":"' + btoa(JSON.stringify(widgetInstanceContent)) + '" }',
         })
@@ -287,7 +297,12 @@
           /// update indexlist
           $.ajax({
               url: gridrendercontent.indexurl + '/' + gridrendercontent.indexfilename,
-              beforeSend: setWidgetAuthHeader.bind(gridrendercontent),
+              beforeSend: function (xhr) {
+                if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
+                {
+                xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+                }
+              },
               type: 'PUT',
               data: '{"message": "create indexlist","sha":"' + gridrendercontent.listsha + '","content":"' + btoa(JSON.stringify(updatedlistcontent)) + '" }',
               dataType: 'json',
@@ -449,7 +464,8 @@
               )
             )
           )));
-      if (typeof gridrendercontent.token !== 'undefined' && gridrendercontent.token !== '') {
+          if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
+{
         $(modalfooter)
           .append(
             $('<button/>')
@@ -467,7 +483,12 @@
               /// update indexlist
               $.ajax({
                   url: gridrendercontent.indexurl + '/' + gridrendercontent.indexfilename,
-                  beforeSend: setWidgetAuthHeader.bind(gridrendercontent),
+                  beforeSend: function (xhr) {
+                    if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
+                    {
+                    xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+                    }
+                  },
                   type: 'PUT',
                   data: '{"message": "create indexlist","sha":"' + gridrendercontent.listsha + '","content":"' + btoa(JSON.stringify(updatedlistcontent)) + '" }',
                   dataType: 'json',
@@ -534,7 +555,12 @@
     function showInnerWidgetModal(id, gridrendercontent) {
       $.ajax({
           url: gridrendercontent.indexurl + "/" + id,
-          beforeSend: setWidgetAuthHeader.bind(gridrendercontent),
+          beforeSend: function (xhr) {
+            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
+            {
+            xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+            }
+          },
           dataType: 'json'
         })
         .done(function (response) {

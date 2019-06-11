@@ -4,39 +4,39 @@
   $('#main').append(
     oliveUI.render()
   );
-  var widget1 = oliveUI.createWidgetInstance('Grid Widget');
+  // var widget1 = oliveUI.createWidgetInstance('Grid Widget');
   //  var widget2 = oliveUI.createWidgetInstance('Markdown Render UI');
-  var widget2 = oliveUI.createWidgetInstance('Grid Widget');
-  var widget3 = oliveUI.createWidgetInstance('Grid Widget');
+  // var widget2 = oliveUI.createWidgetInstance('Grid Widget');
+  // var widget3 = oliveUI.createWidgetInstance('Grid Widget');
   /// here is the initial configuration of widget instance(s)
-  oliveUI.setWidgetInstanceConfiguration(widget1, {
-    indexurl:"https://api.github.com/repositories/175385549/contents/js",
-    indexfilename:"indexlist",
-    type:"JobTile",
-    secret:"1945319cd07efdad529f45119267792ddf2974b4",
-    client:"1777413b1f15516dca79",
-  });
-  oliveUI.setWidgetInstanceConfiguration(widget2, {
-    indexurl:"https://api.github.com/repos/bocbrokeragetest/brokerage/contents/repodata",
-    indexfilename:"indexlist",
-    type:"TrainingTile",
-    secret:"1945319cd07efdad529f45119267792ddf2974b4",
-    client:"1777413b1f15516dca79"
-  });
-  oliveUI.setWidgetInstanceConfiguration(widget3, {
-    indexurl:"https://api.github.com/repos/bocbrokeragetest/brokerage/contents/repodata",
-    indexfilename:"indexlist",
-    type:"EventTile",
-    secret:"1945319cd07efdad529f45119267792ddf2974b4",
-    client:"1777413b1f15516dca79"
-  });
+  // oliveUI.setWidgetInstanceConfiguration(widget1, {
+  //   indexurl:"https://api.github.com/repositories/175385549/contents/js",
+  //   indexfilename:"indexlist",
+  //   type:"JobTile",
+  //   secret:"1945319cd07efdad529f45119267792ddf2974b4",
+  //   client:"1777413b1f15516dca79",
+  // });
+  // oliveUI.setWidgetInstanceConfiguration(widget2, {
+  //   indexurl:"https://api.github.com/repos/bocbrokeragetest/brokerage/contents/repodata",
+  //   indexfilename:"indexlist",
+  //   type:"TrainingTile",
+  //   secret:"1945319cd07efdad529f45119267792ddf2974b4",
+  //   client:"1777413b1f15516dca79"
+  // });
+  // oliveUI.setWidgetInstanceConfiguration(widget3, {
+  //   indexurl:"https://api.github.com/repos/bocbrokeragetest/brokerage/contents/repodata",
+  //   indexfilename:"indexlist",
+  //   type:"EventTile",
+  //   secret:"1945319cd07efdad529f45119267792ddf2974b4",
+  //   client:"1777413b1f15516dca79"
+  // });
   // var toSave = oliveUI.getContent();
   // console.log(toSave);
   // oliveUI.setContent(toSave);
   var downloadbutton = document.createElement('button');
   var uploadbutton = document.createElement('button');
   var cloudsavebutton = document.createElement('button');
-  var configrepourl = "https://api.github.com/repos/bocbrokeragetest/brokerage";
+  var configrepourl = "https://api.github.com/repos/bocbrokeragetest/brokerage/r";
   var listsha = '';
   var user = document.createElement('input');
   var pass = document.createElement('input');
@@ -44,6 +44,7 @@
   var configform = document.createElement('form');
   var optionsModal = document.createElement('div');
   var widgetAddButton = document.createElement('button');
+  var isadmin;
   $('#main').prepend(
     $(downloadbutton)
     .text("Download Grid config")
@@ -63,6 +64,7 @@
         if (valup.manifestName === 'Grid Widget'); {
           valup.widgetContent.user = '';
           valup.widgetContent.pass = '';
+          valup.widgetContent.admin = '';
         }
       });
       $.ajax({
@@ -185,7 +187,7 @@
             type: 'GET',
           })
           .done(function (response) {
-            var isadmin = response.permission;
+             isadmin = response.permission;
             $.ajax({
               url: configrepourl + "/contents/gridconfig.json",
               beforeSend: function (xhr) {
@@ -199,6 +201,7 @@
                 if (val.manifestName === 'Grid Widget'); {
                   val.widgetContent.user = $(user).val();
                   val.widgetContent.pass = $(pass).val();
+                  val.widgetContent.admin = isadmin;
                 }
               });
               oliveUI.setContent(config);
@@ -254,6 +257,7 @@
                 if (val.manifestName === 'Grid Widget'); {
                   val.widgetContent.user = $(user).val();
                   val.widgetContent.pass = $(pass).val();
+                  val.widgetContent.admin = isadmin;
                 }
               });
               oliveUI.setContent(config);
@@ -269,6 +273,7 @@
                 if (val.manifestName === 'Grid Widget'); {
                   val.widgetContent.user = $(user).val();
                   val.widgetContent.pass = $(pass).val();
+                  val.widgetContent.admin = isadmin;
                 }
               });
               oliveUI.setContent(config);

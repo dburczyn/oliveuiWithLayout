@@ -21,12 +21,42 @@
       var grid = {
         type: "Grid",
         render: function (gridrendercontent) {
+
+          $.ajax({
+            url: gridrendercontent.indexurl.split('contents')[0] + "collaborators/" + gridrendercontent.user + "/permission",
+            beforeSend: function (xhr) {
+              xhr.setRequestHeader("Authorization", "Basic " + btoa(gridrendercontent.user + ":" + gridrendercontent.pass));
+            },
+            type: 'GET',
+          })
+          .done(function (response) {
+            gridrendercontent.admin = response.permission;
+
+            })
+            .fail(function () {
+              gridrendercontent.admin = "";
+              });
+
+
+
+
+
+
+
+
+
+
           console.log("gridrendercontent");
           console.log(gridrendercontent);
           if (typeof gridrendercontent.indexurl !== 'undefined' && typeof gridrendercontent.indexfilename !== 'undefined' && gridrendercontent.indexurl !== '' && gridrendercontent.indexfilename !== '') {
             var getDataAjax = $.ajax({
                 url: gridrendercontent.indexurl + "/" + gridrendercontent.indexfilename,
-                beforeSend: setAuthHeader.bind(gridrendercontent),
+                beforeSend: function (xhr) {
+                  if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
+                  {
+                  xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+                  }
+                },
                 dataType: 'json'
               }).done(function (response) {
                 gridrendercontent.content = atob(response.content);
@@ -79,12 +109,12 @@
             };
           }
           var newbuttoninstance = Object.assign({}, widgetlist[j]);
-          if (typeof newbuttoninstance.makeCreateButton === "function" && typeof gridrendercontent.token !== 'undefined' && gridrendercontent.token !== '' && widgetlist[j].type === gridrendercontent.type) {
+          if (typeof newbuttoninstance.makeCreateButton === "function" && typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin !== '' && widgetlist[j].type === gridrendercontent.type) {
             var newbutton = newbuttoninstance.makeCreateButton(gridrendercontent);
             $(widgetcontainerinner).append(newbutton);
           }
         };
-        if ((typeof gridrendercontent.token !== 'undefined') && (gridrendercontent.token != "")) {
+        if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin != "")) {
           $(widgetcontainerinner)
             .append(
               $('<button/>')
@@ -126,7 +156,7 @@
         });
       }
       function cleanupIndexlist(gridrendercontent) {
-        if ((typeof gridrendercontent.token !== 'undefined') && (gridrendercontent.token != "")) {
+        if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin != "")) {
           getListOfObjects(gridrendercontent); // used fo r creation/update of indexlist - only for admin = authenticated users
         }
         Array.prototype.diff = function (a) {
@@ -146,7 +176,12 @@
         function getListOfObjects(gridinstance) {
           $.ajax({
               url: gridinstance.indexurl,
-              beforeSend: setAuthHeader.bind(gridinstance),
+              beforeSend: function (xhr) {
+                if (gridinstance.user !== "" && gridinstance.pass !== "" && typeof gridinstance.user !== "undefined" && typeof gridinstance.pass !== "undefined")
+                {
+                xhr.setRequestHeader("Authorization", "Basic " + btoa((gridinstance.user) + ":" + (gridinstance.pass)));
+                }
+              },
               dataType: 'json'
             }).done(function (results) {
               $.each(results, function (i, f) {
@@ -174,7 +209,12 @@
             if (unencodedcontent.ignoredlist.indexOf(nameToAddToList) == -1) {
               var request = $.ajax({
                 url: gridinstance.indexurl + '/' + nameToAddToList,
-                beforeSend: setAuthHeader.bind(gridinstance),
+                beforeSend: function (xhr) {
+                  if (gridinstance.user !== "" && gridinstance.pass !== "" && typeof gridinstance.user !== "undefined" && typeof gridinstance.pass !== "undefined")
+                  {
+                  xhr.setRequestHeader("Authorization", "Basic " + btoa((gridinstance.user) + ":" + (gridinstance.pass)));
+                  }
+                },
                 dataType: 'json'
               }).done(function (response) {
                 prepareUpdateList(response);
@@ -234,7 +274,12 @@
           if (!arraysEqual(unencodedcontent.list, updatedIndexList.list) || !arraysEqual(unencodedcontent.ignoredlist, updatedIndexList.ignoredlist)) {
             $.ajax({
               url: args.indexurl + '/' + args.indexfilename,
-              beforeSend: setAuthHeader.bind(args),
+              beforeSend: function (xhr) {
+                if (args.user !== "" && args.pass !== "" && typeof args.user !== "undefined" && typeof args.pass !== "undefined")
+                {
+                xhr.setRequestHeader("Authorization", "Basic " + btoa((args.user) + ":" + (args.pass)));
+                }
+              },
               type: 'PUT',
               data: '{"message": "create indexlist","sha":"' + listsha + '","content":"' + btoa(JSON.stringify(updatedIndexList)) + '" }',
               dataType: 'json',
