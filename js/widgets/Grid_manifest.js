@@ -4,15 +4,17 @@
     name: 'Grid Widget',
     description: '',
     createUIFn: function () {
-      var _new_brokerage_object_grid_widget= function (config = {}) {
+      var _new_brokerage_object_grid_widget = function (config = {}) {
         var _dom = {
           rootDiv: $('<div>')
         };
         return {
           render: function () {
-                        return _dom.rootDiv;
+            console.log("render");
+            return _dom.rootDiv;
           },
           setContent: function (content = {}) {
+            console.log("setcontnent");
             content = content || '';
             _dom.rootDiv.empty();
             try {
@@ -26,12 +28,7 @@
       return _new_brokerage_object_grid_widget();
     },
     createConfigurationUIFn: function () {
-      var _dom = {
-        rootDiv: $('<div>')
-      };
-      _dom.rootDiv.empty();
-      return new_brokerage_object_grid_config_js({
-      });
+      return new_brokerage_object_grid_config_js({});
     },
   });
 }(jQuery, OliveUI, OliveUI.modules.new_brokerage_object_grid_widget, OliveUI.modules.new_brokerage_object_grid_config_js));

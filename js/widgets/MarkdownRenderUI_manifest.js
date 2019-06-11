@@ -15,9 +15,11 @@
         var _converter = new showdown.Converter(config);
         return {
           render: function () {
+            console.log("leci render markdownu");
             return _dom.rootDiv;
           },
           setContent: function (content = {}) {
+            console.log("leci stkonctent markdownu");
             content.text = content.text || '';
             _dom.rootDiv.empty();
             try {

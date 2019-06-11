@@ -1,5 +1,8 @@
 (function ($, OliveUI) {
   OliveUI.modules.new_brokerage_object_job_widget = function (config = {}) {
+
+
+
     config.height = config.minHeight || 100;
     'use strict';
     var jobStatics = {
@@ -38,15 +41,10 @@
       render: function (renderdata, gridrendercontent) {
         widgetRepresentation = document.createElement('div');
         jobtileinstance = renderdata;
-        if (typeof gridrendercontent !== 'undefined') {
-          gridrendercontent.token = gridrendercontent.token;
-          gridrendercontent.indexurl = gridrendercontent.indexurl;
-        }
         createFrontWidgetTile(gridrendercontent);
         return widgetRepresentation;
       },
       makeCreateButton: function (gridrendercontent) {
-        gridrendercontent = gridrendercontent;
         $(widgetAddButton)
           .appendTo($(newbuttoncontainer))
           .addClass("btn btn-info")
@@ -56,7 +54,7 @@
       },
     };
     function setWidgetAuthHeader(request) {
-      if (this.token !== "") {
+      if (typeof this.token !== 'undefined' && this.token !== '') {
         request.setRequestHeader("Authorization", "token " + this.token);
       }
     }
@@ -83,10 +81,9 @@
       return widgetInstanceContent;
     }
     function makeCreateForm() {
-      $(document).ready(function() {
+      $(document).ready(function () {
         $('#summernote').summernote();
       });
-
       $(modalcontainer).empty();
       $(modalcontainer).append(
         $(createform)
@@ -253,7 +250,15 @@
         })
         .done(function () {
           $(expandedWidgetView).modal('hide');
+          $('.glyphicon-refresh').trigger('click');
         });
+    }
+    function updateIndexlistForEditDelete(updatedlistcontent) {
+      for (var i = 0; i < updatedlistcontent.list.length; i++) {
+        if (updatedlistcontent.list[i].updatedat == currentresponse.name) {
+          updatedlistcontent.list.splice(i, 1);
+        }
+      }
     }
     function prepareCreateWidgetContentUrl(gridrendercontent) {
       return gridrendercontent.indexurl + '/' + widgetInstanceContent.updatedat;
@@ -268,9 +273,33 @@
         })
         .done(function () {
           $(createform).modal('hide');
+          var updatedlistcontent = JSON.parse(gridrendercontent.content);
+          updatedlistcontent.list.push({
+            createdat: widgetInstanceContent.createdat,
+            updatedat: widgetInstanceContent.updatedat,
+            datetype: widgetInstanceContent.datetype,
+            name: widgetInstanceContent.name,
+            type: widgetInstanceContent.type
+          });
           if (widgetInstanceContent.updatedat !== widgetInstanceContent.createdat) {
-            deleteWidgetContentFile(gridrendercontent);
+          updateIndexlistForEditDelete(updatedlistcontent);
           }
+          /// update indexlist
+          $.ajax({
+              url: gridrendercontent.indexurl + '/' + gridrendercontent.indexfilename,
+              beforeSend: setWidgetAuthHeader.bind(gridrendercontent),
+              type: 'PUT',
+              data: '{"message": "create indexlist","sha":"' + gridrendercontent.listsha + '","content":"' + btoa(JSON.stringify(updatedlistcontent)) + '" }',
+              dataType: 'json',
+            })
+            .done(function () {
+              if (widgetInstanceContent.updatedat !== widgetInstanceContent.createdat) {
+                deleteWidgetContentFile(gridrendercontent);
+              }
+              else{
+                $('.glyphicon-refresh').trigger('click');
+              }
+            });
         });
     }
     function addCreateFormSubmitHandler(gridrendercontent) {
@@ -325,6 +354,7 @@
     function createInnerWidgetModal(gridrendercontent) {
       $(modalcontainer).empty();
       $(modalfooter).empty();
+      $(expandedWidgetView).empty();
       $(modalcontainer).append(
         $(expandedWidgetView)
         .addClass("modal")
@@ -420,17 +450,31 @@
             )
           )));
       if (typeof gridrendercontent.token !== 'undefined' && gridrendercontent.token !== '') {
-        $(modalfooter).append(
+        $(modalfooter)
+          .append(
             $('<button/>')
             .addClass("btn btn-default")
             .attr("type", "button")
             .text("Delete")
             .on('click', function (e) {
+              e.stopPropagation();
               var action = confirm('Are you sure you wish to delete this item ? It cannot be undone!');
               if (action === false) {
                 return false;
               }
-              deleteWidgetContentFile(gridrendercontent);
+              var updatedlistcontent = JSON.parse(gridrendercontent.content);
+              updateIndexlistForEditDelete(updatedlistcontent);
+              /// update indexlist
+              $.ajax({
+                  url: gridrendercontent.indexurl + '/' + gridrendercontent.indexfilename,
+                  beforeSend: setWidgetAuthHeader.bind(gridrendercontent),
+                  type: 'PUT',
+                  data: '{"message": "create indexlist","sha":"' + gridrendercontent.listsha + '","content":"' + btoa(JSON.stringify(updatedlistcontent)) + '" }',
+                  dataType: 'json',
+                })
+                .done(function () {
+                  deleteWidgetContentFile(gridrendercontent);
+                });
             })
           )
           .append(
@@ -467,7 +511,7 @@
           $(filecontentfield).val('');
           $(emailaddressfield).val('');
           $(jobpicturefield).val('');
-          $(modalcontainer).appendTo($(document.body));
+          // $(modalcontainer).appendTo($(document.body));
           $(createform).modal('show');
         });
     }
@@ -506,5 +550,8 @@
     }
     OliveUI.modules.new_brokerage_object_grid_widget_js_modules.push(returned);
     return returned;
+
+
+
   }();
 }(jQuery, OliveUI));
