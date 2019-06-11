@@ -21,6 +21,8 @@
       var grid = {
         type: "Grid",
         render: function (gridrendercontent) {
+          console.log("gridrendercontent");
+          console.log(gridrendercontent);
           if (typeof gridrendercontent.indexurl !== 'undefined' && typeof gridrendercontent.indexfilename !== 'undefined' && gridrendercontent.indexurl !== '' && gridrendercontent.indexfilename !== '') {
             var getDataAjax = $.ajax({
                 url: gridrendercontent.indexurl + "/" + gridrendercontent.indexfilename,
