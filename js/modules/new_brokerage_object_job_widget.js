@@ -457,7 +457,7 @@
               )
             )
           )));
-      if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
+      if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined" && gridrendercontent.admin !== "" && typeof gridrendercontent.admin !== "undefined") {
         $(modalfooter)
           .append(
             $('<button/>')

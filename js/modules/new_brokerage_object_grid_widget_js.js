@@ -21,7 +21,7 @@
       var grid = {
         type: "Grid",
         render: function (gridrendercontent) {
-          $.ajax({
+          var getAdminAjax = $.ajax({
               url: gridrendercontent.indexurl.split('contents')[0] + "collaborators/" + gridrendercontent.user + "/permission",
               beforeSend: function (xhr) {
                 xhr.setRequestHeader("Authorization", "Basic " + btoa(gridrendercontent.user + ":" + gridrendercontent.pass));
@@ -30,14 +30,9 @@
             })
             .done(function (response) {
               gridrendercontent.admin = response.permission;
-              console.log("gridrendercontent.admin done"  );
-              console.log(gridrendercontent.admin );
             })
             .fail(function () {
               gridrendercontent.admin = "";
-              console.log("gridrendercontent.admin fail"  );
-              console.log(gridrendercontent.admin );
-
             });
           if (typeof gridrendercontent.indexurl !== 'undefined' && typeof gridrendercontent.indexfilename !== 'undefined' && gridrendercontent.indexurl !== '' && gridrendercontent.indexfilename !== '') {
             var getDataAjax = $.ajax({
@@ -74,8 +69,10 @@
               }
             });
             $.when(getDataAjax).done(function () {
-              addWidgetContainer();
-              instantiateWidgets(gridrendercontent);
+              $.when(getAdminAjax).always(function () {
+                addWidgetContainer();
+                instantiateWidgets(gridrendercontent);
+              });
             });
             return widgetcontainer;
           }
@@ -98,17 +95,14 @@
               }
             };
           }
-
           if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin != "")) {
-
-          var newbuttoninstance = Object.assign({}, widgetlist[j]);
-          if (typeof newbuttoninstance.makeCreateButton === "function" && typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin !== '' && widgetlist[j].type === gridrendercontent.type)
-           {
-            var newbutton = newbuttoninstance.makeCreateButton(gridrendercontent);
-            $(widgetcontainerinner).append(newbutton);
+            var newbuttoninstance = Object.assign({}, widgetlist[j]);
+            if (typeof newbuttoninstance.makeCreateButton === "function" && typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin !== '' && widgetlist[j].type === gridrendercontent.type) {
+              var newbutton = newbuttoninstance.makeCreateButton(gridrendercontent);
+              // $(widgetcontainerinner).append(newbutton);
+              $(newbutton).clone(true,true).appendTo(widgetcontainerinner);
+            }
           }
-        }
-
         }
         if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin != "")) {
           $(widgetcontainerinner)
@@ -193,7 +187,7 @@
                 alert("invalid repo url");
               }
               if (jqXHR.status == '401') {
-                alert("invalid authorization token - provide valid token for admin mode or no token for guestuser mode");
+                alert("invalid authorization");
               }
             });
         }
