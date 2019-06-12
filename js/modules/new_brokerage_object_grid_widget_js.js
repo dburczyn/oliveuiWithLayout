@@ -21,40 +21,30 @@
       var grid = {
         type: "Grid",
         render: function (gridrendercontent) {
-
           $.ajax({
-            url: gridrendercontent.indexurl.split('contents')[0] + "collaborators/" + gridrendercontent.user + "/permission",
-            beforeSend: function (xhr) {
-              xhr.setRequestHeader("Authorization", "Basic " + btoa(gridrendercontent.user + ":" + gridrendercontent.pass));
-            },
-            type: 'GET',
-          })
-          .done(function (response) {
-            gridrendercontent.admin = response.permission;
-
+              url: gridrendercontent.indexurl.split('contents')[0] + "collaborators/" + gridrendercontent.user + "/permission",
+              beforeSend: function (xhr) {
+                xhr.setRequestHeader("Authorization", "Basic " + btoa(gridrendercontent.user + ":" + gridrendercontent.pass));
+              },
+              type: 'GET',
+            })
+            .done(function (response) {
+              gridrendercontent.admin = response.permission;
+              console.log("gridrendercontent.admin done"  );
+              console.log(gridrendercontent.admin );
             })
             .fail(function () {
               gridrendercontent.admin = "";
-              });
+              console.log("gridrendercontent.admin fail"  );
+              console.log(gridrendercontent.admin );
 
-
-
-
-
-
-
-
-
-
-          console.log("gridrendercontent");
-          console.log(gridrendercontent);
+            });
           if (typeof gridrendercontent.indexurl !== 'undefined' && typeof gridrendercontent.indexfilename !== 'undefined' && gridrendercontent.indexurl !== '' && gridrendercontent.indexfilename !== '') {
             var getDataAjax = $.ajax({
                 url: gridrendercontent.indexurl + "/" + gridrendercontent.indexfilename,
                 beforeSend: function (xhr) {
-                  if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
-                  {
-                  xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+                  if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
+                    xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
                   }
                 },
                 dataType: 'json'
@@ -108,12 +98,18 @@
               }
             };
           }
+
+          if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin != "")) {
+
           var newbuttoninstance = Object.assign({}, widgetlist[j]);
-          if (typeof newbuttoninstance.makeCreateButton === "function" && typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin !== '' && widgetlist[j].type === gridrendercontent.type) {
+          if (typeof newbuttoninstance.makeCreateButton === "function" && typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin !== '' && widgetlist[j].type === gridrendercontent.type)
+           {
             var newbutton = newbuttoninstance.makeCreateButton(gridrendercontent);
             $(widgetcontainerinner).append(newbutton);
           }
-        };
+        }
+
+        }
         if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin != "")) {
           $(widgetcontainerinner)
             .append(
@@ -177,9 +173,8 @@
           $.ajax({
               url: gridinstance.indexurl,
               beforeSend: function (xhr) {
-                if (gridinstance.user !== "" && gridinstance.pass !== "" && typeof gridinstance.user !== "undefined" && typeof gridinstance.pass !== "undefined")
-                {
-                xhr.setRequestHeader("Authorization", "Basic " + btoa((gridinstance.user) + ":" + (gridinstance.pass)));
+                if (gridinstance.user !== "" && gridinstance.pass !== "" && typeof gridinstance.user !== "undefined" && typeof gridinstance.pass !== "undefined") {
+                  xhr.setRequestHeader("Authorization", "Basic " + btoa((gridinstance.user) + ":" + (gridinstance.pass)));
                 }
               },
               dataType: 'json'
@@ -210,9 +205,8 @@
               var request = $.ajax({
                 url: gridinstance.indexurl + '/' + nameToAddToList,
                 beforeSend: function (xhr) {
-                  if (gridinstance.user !== "" && gridinstance.pass !== "" && typeof gridinstance.user !== "undefined" && typeof gridinstance.pass !== "undefined")
-                  {
-                  xhr.setRequestHeader("Authorization", "Basic " + btoa((gridinstance.user) + ":" + (gridinstance.pass)));
+                  if (gridinstance.user !== "" && gridinstance.pass !== "" && typeof gridinstance.user !== "undefined" && typeof gridinstance.pass !== "undefined") {
+                    xhr.setRequestHeader("Authorization", "Basic " + btoa((gridinstance.user) + ":" + (gridinstance.pass)));
                   }
                 },
                 dataType: 'json'
@@ -275,9 +269,8 @@
             $.ajax({
               url: args.indexurl + '/' + args.indexfilename,
               beforeSend: function (xhr) {
-                if (args.user !== "" && args.pass !== "" && typeof args.user !== "undefined" && typeof args.pass !== "undefined")
-                {
-                xhr.setRequestHeader("Authorization", "Basic " + btoa((args.user) + ":" + (args.pass)));
+                if (args.user !== "" && args.pass !== "" && typeof args.user !== "undefined" && typeof args.pass !== "undefined") {
+                  xhr.setRequestHeader("Authorization", "Basic " + btoa((args.user) + ":" + (args.pass)));
                 }
               },
               type: 'PUT',
@@ -287,7 +280,6 @@
           }
         }
       }
-
       return grid;
     };
     OliveUI.modules.new_brokerage_object_grid_widget_js_modules = [];

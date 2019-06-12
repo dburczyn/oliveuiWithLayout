@@ -1,8 +1,5 @@
 (function ($, OliveUI) {
   OliveUI.modules.new_brokerage_object_job_widget = function (config = {}) {
-
-
-
     config.height = config.minHeight || 100;
     'use strict';
     var jobStatics = {
@@ -245,9 +242,8 @@
       $.ajax({
           url: prepareDeleteWidgetContentUrl(gridrendercontent),
           beforeSend: function (xhr) {
-            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
-            {
-            xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
+              xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
             }
           },
           type: 'DELETE',
@@ -273,9 +269,8 @@
       $.ajax({
           url: prepareCreateWidgetContentUrl(gridrendercontent),
           beforeSend: function (xhr) {
-            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
-            {
-            xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
+              xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
             }
           },
           type: 'PUT',
@@ -292,15 +287,14 @@
             type: widgetInstanceContent.type
           });
           if (widgetInstanceContent.updatedat !== widgetInstanceContent.createdat) {
-          updateIndexlistForEditDelete(updatedlistcontent);
+            updateIndexlistForEditDelete(updatedlistcontent);
           }
           /// update indexlist
           $.ajax({
               url: gridrendercontent.indexurl + '/' + gridrendercontent.indexfilename,
               beforeSend: function (xhr) {
-                if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
-                {
-                xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+                if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
+                  xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
                 }
               },
               type: 'PUT',
@@ -310,8 +304,7 @@
             .done(function () {
               if (widgetInstanceContent.updatedat !== widgetInstanceContent.createdat) {
                 deleteWidgetContentFile(gridrendercontent);
-              }
-              else{
+              } else {
                 $('.glyphicon-refresh').trigger('click');
               }
             });
@@ -464,8 +457,7 @@
               )
             )
           )));
-          if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
-{
+      if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
         $(modalfooter)
           .append(
             $('<button/>')
@@ -484,9 +476,8 @@
               $.ajax({
                   url: gridrendercontent.indexurl + '/' + gridrendercontent.indexfilename,
                   beforeSend: function (xhr) {
-                    if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
-                    {
-                    xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+                    if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
+                      xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
                     }
                   },
                   type: 'PUT',
@@ -556,9 +547,8 @@
       $.ajax({
           url: gridrendercontent.indexurl + "/" + id,
           beforeSend: function (xhr) {
-            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined")
-            {
-            xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
+              xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
             }
           },
           dataType: 'json'
@@ -576,8 +566,5 @@
     }
     OliveUI.modules.new_brokerage_object_grid_widget_js_modules.push(returned);
     return returned;
-
-
-
   }();
 }(jQuery, OliveUI));

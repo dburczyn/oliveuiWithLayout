@@ -10,11 +10,9 @@
         };
         return {
           render: function () {
-            console.log("render");
             return _dom.rootDiv;
           },
           setContent: function (content = {}) {
-            console.log("setcontnent");
             content = content || '';
             _dom.rootDiv.empty();
             try {

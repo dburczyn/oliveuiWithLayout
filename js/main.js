@@ -4,39 +4,11 @@
   $('#main').append(
     oliveUI.render()
   );
-  // var widget1 = oliveUI.createWidgetInstance('Grid Widget');
-  //  var widget2 = oliveUI.createWidgetInstance('Markdown Render UI');
-  // var widget2 = oliveUI.createWidgetInstance('Grid Widget');
-  // var widget3 = oliveUI.createWidgetInstance('Grid Widget');
-  /// here is the initial configuration of widget instance(s)
-  // oliveUI.setWidgetInstanceConfiguration(widget1, {
-  //   indexurl:"https://api.github.com/repositories/175385549/contents/js",
-  //   indexfilename:"indexlist",
-  //   type:"JobTile",
-  //   secret:"1945319cd07efdad529f45119267792ddf2974b4",
-  //   client:"1777413b1f15516dca79",
-  // });
-  // oliveUI.setWidgetInstanceConfiguration(widget2, {
-  //   indexurl:"https://api.github.com/repos/bocbrokeragetest/brokerage/contents/repodata",
-  //   indexfilename:"indexlist",
-  //   type:"TrainingTile",
-  //   secret:"1945319cd07efdad529f45119267792ddf2974b4",
-  //   client:"1777413b1f15516dca79"
-  // });
-  // oliveUI.setWidgetInstanceConfiguration(widget3, {
-  //   indexurl:"https://api.github.com/repos/bocbrokeragetest/brokerage/contents/repodata",
-  //   indexfilename:"indexlist",
-  //   type:"EventTile",
-  //   secret:"1945319cd07efdad529f45119267792ddf2974b4",
-  //   client:"1777413b1f15516dca79"
-  // });
-  // var toSave = oliveUI.getContent();
-  // console.log(toSave);
-  // oliveUI.setContent(toSave);
+
   var downloadbutton = document.createElement('button');
   var uploadbutton = document.createElement('button');
   var cloudsavebutton = document.createElement('button');
-  var configrepourl = "https://api.github.com/repos/bocbrokeragetest/brokerage/r";
+  var configrepourl = "https://api.github.com/repos/bocbrokeragetest/brokerage";
   var listsha = '';
   var user = document.createElement('input');
   var pass = document.createElement('input');
@@ -44,6 +16,7 @@
   var configform = document.createElement('form');
   var optionsModal = document.createElement('div');
   var widgetAddButton = document.createElement('button');
+  var newWidgetInstance = document.createElement('button');
   var isadmin;
   $('#main').prepend(
     $(downloadbutton)
@@ -85,8 +58,8 @@
     })
   );
   $(function () {
-    console.log("hiding buttons 1");
-    $(".lm_header").hide();
+    $(".glyphicon-wrench").hide();
+    $(newWidgetInstance).hide();
     $(uploadbutton).hide();
     $(downloadbutton).hide();
     $(cloudsavebutton).hide();
@@ -96,8 +69,8 @@
     }).done(function (response) {
       listsha = response.sha;
       oliveUI.setContent(JSON.parse(atob(response.content)));
-      console.log("hiding buttons 2");
-      $(".lm_header").hide();
+      $(".glyphicon-wrench").hide();
+      $(newWidgetInstance).hide();
       $(uploadbutton).hide();
       $(downloadbutton).hide();
       $(cloudsavebutton).hide();
@@ -175,6 +148,13 @@
       .click(function () {
         $(optionsModal).modal('show');
       });
+    $(newWidgetInstance)
+      .prependTo($("#main"))
+      .addClass("btn btn-warning")
+      .text("New Widget")
+      .click(function () {
+        oliveUI.createWidgetInstance('Grid Widget');
+      });
     $(gettokenbutton)
       .unbind('click')
       .on('click', function (e) {
@@ -187,7 +167,7 @@
             type: 'GET',
           })
           .done(function (response) {
-             isadmin = response.permission;
+            isadmin = response.permission;
             $.ajax({
               url: configrepourl + "/contents/gridconfig.json",
               beforeSend: function (xhr) {
@@ -205,44 +185,43 @@
                 }
               });
               oliveUI.setContent(config);
-              console.log("hiding buttons 3");
-              $(".lm_header").hide();
+              $(".glyphicon-wrench").hide();
+              $(newWidgetInstance).hide();
+              $(newWidgetInstance).hide();
               $(uploadbutton).hide();
+              $(newWidgetInstance).hide();
               $(downloadbutton).hide();
               $(cloudsavebutton).hide();
               if (isadmin === "admin") {
-                console.log("showing buttons");
-                $(".lm_header").show();
+                $(".glyphicon-wrench").show();
+                $(newWidgetInstance).show();
                 $(uploadbutton).show();
                 $(downloadbutton).show();
                 $(cloudsavebutton).show();
               }
             }).fail(function (response) {
-              // listsha = response.sha;
-              // var config = JSON.parse(atob(response.content));
-              // $.each(config.widgetInstances, function (i, val) {
-              //   if (val.manifestName === 'Grid Widget'); {
-              //     val.widgetContent.user = $(user).val();
-              //     val.widgetContent.pass = $(pass).val();
-              //   }
-              // });
-              // oliveUI.setContent(config);
-              console.log("hiding buttons 3");
-              $(".lm_header").hide();
+              listsha = response.sha;
+              var config = JSON.parse(atob(response.content));
+              $.each(config.widgetInstances, function (i, val) {
+                if (val.manifestName === 'Grid Widget'); {
+                  val.widgetContent.user = $(user).val();
+                  val.widgetContent.pass = $(pass).val();
+                }
+              });
+              oliveUI.setContent(config);
+              $(".glyphicon-wrench").hide();
+              $(newWidgetInstance).hide();
               $(uploadbutton).hide();
               $(downloadbutton).hide();
               $(cloudsavebutton).hide();
               if (isadmin === "admin") {
-                console.log("showing buttons");
-                $(".lm_header").show();
+                $(".glyphicon-wrench").show();
+                $(newWidgetInstance).show();
                 $(uploadbutton).show();
                 $(downloadbutton).show();
                 $(cloudsavebutton).show();
               }
             });
-
-
-
           }).fail(function (response) {
             $.ajax({
               url: configrepourl + "/contents/gridconfig.json",
@@ -261,12 +240,12 @@
                 }
               });
               oliveUI.setContent(config);
-              $(".lm_header").hide();
+              $(".glyphicon-wrench").hide();
+              $(newWidgetInstance).hide();
               $(uploadbutton).hide();
               $(downloadbutton).hide();
               $(cloudsavebutton).hide();
             }).fail(function (response) {
-
               listsha = response.sha;
               var config = JSON.parse(atob(response.content));
               $.each(config.widgetInstances, function (i, val) {
@@ -277,25 +256,16 @@
                 }
               });
               oliveUI.setContent(config);
-
-
-
             });
-
-
-
-
-
-
           });
         $(optionsModal).modal('hide');
       });
   }
   addGithubLoginForm(configrepourl);
   //   setTimeout(function() {
-  //     $('.glyphicon-refresh').trigger('click');
+  //     $('.glyphicon-wrench').trigger('click');
   //  }, 3000);
   // $(function() {
-  // $('.glyphicon-refresh').trigger('click');
+  // $('.glyphicon-wrench').trigger('click');
   // });
 }(jQuery, OliveUI));

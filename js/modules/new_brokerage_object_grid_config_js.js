@@ -37,7 +37,6 @@
       });
     return {
       getContent: function () {
-        console.log("getcontent z configa");
         config.indexurl = $(url).val();
         config.token = $(token).val();
         config.indexfilename = $(indexfilename).val();
@@ -52,7 +51,6 @@
         return config;
       },
       setContent: function (content = {}) {
-        console.log("setcontent z configa");
         $(url).val(content.indexurl);
         $(token).val(content.token);
         $(indexfilename).val(content.indexfilename);

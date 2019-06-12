@@ -1,11 +1,8 @@
 (function ($, OliveUI, GoldenLayout) {
-
   if (typeof $('<div>').resizable != 'function') throw 'JQuery UI Required';
-
   var _statics = {
     init: function (_dom, _state, config, content) {
       if (_state.layoutManager != null) throw 'Layout Manager already initialized';
-
       _state.layoutManager = new GoldenLayout({
         content: content,
         settings: {
@@ -13,21 +10,16 @@
           showPopoutIcon: false
         }
       }, _dom.rootDiv);
-
       _state.layoutManager.init();
-
       $(window).on('resize', function () {
         _state.layoutManager.updateSize();
       });
-
       _dom.rootDiv.on('resize', function () {
         _state.layoutManager.updateSize();
       });
-
       _state.layoutManager.on('initialised', function () {
         _state.layoutManager.root.addChild(_state.initialLayoutContent);
       });
-
       _state.layoutManager.on('stackCreated', function (stack) {
         stack.header.controlsContainer.find('.lm_close').off('click').click(function () {
           var activeContentItem = stack.getActiveContentItem();
@@ -35,19 +27,15 @@
           config.onWidgetCloseFn(uuid);
           activeContentItem.remove();
         });
-
         stack.header.controlsContainer.prepend($('<li class="glyphicon glyphicon-wrench"></li>').click(function () {
           var uuid = stack.getActiveContentItem().container.getState().uuid;
           config.onWidgetConfigFn(uuid);
         }));
-
         stack.header.controlsContainer.prepend($('<li class="glyphicon glyphicon-refresh"></li>').click(function () {
           var uuid = stack.getActiveContentItem().container.getState().uuid;
           config.onWidgetRefreshFn(uuid);
         }));
-
       });
-
       _state.layoutManager.on('tabCreated', function (tab) {
         tab.closeElement.off('click').click(function () {
           var activeContentItem = tab.contentItem;
@@ -56,7 +44,6 @@
           activeContentItem.remove();
         });
       });
-
       _state.layoutManager.registerComponent('default', function (container, state) {
         var domEl = _state.availableDomEls[state.uuid];
         if (!domEl) throw 'Incorrectly initialized Dom for ' + state.uuid;
@@ -64,11 +51,9 @@
           container.getElement().html(domEl);
       });
     },
-
     addDomEl: function (_state, uuid, domEl) {
       _state.availableDomEls[uuid] = domEl;
     },
-
     addDomElLayoutConfiguration: function (_state, config, uuid) {
       var _domLayoutConf = {
         type: 'component',
@@ -80,14 +65,12 @@
           uuid: uuid
         }
       };
-
       if (_state.layoutManager.root) {
         _state.layoutManager.root.contentItems[0].addChild(_domLayoutConf);
       } else {
         _state.initialLayoutContent.content.push(_domLayoutConf);
       }
     },
-
     setTitle: function (_state, uuid, title) {
       if (_state.layoutManager.root) {
         if (_state.layoutManager.root.getItemsById(uuid).length != 0)
@@ -99,17 +82,16 @@
           if (currentContent.content)
             for (var i = 0; i < currentContent.content.length; i++) {
               var ret = _getItemsByIdFn(currentContent.content[i]);
-              if(ret)
+              if (ret)
                 return ret;
             }
           return null;
         };
         var item = _getItemsByIdFn(_state.initialLayoutContent);
-        if(item)
+        if (item)
           item.title = title;
       }
     },
-
     setContent: function (_dom, _state, config, content) {
       content.content = content.content || [];
       content.rootWidth = content.rootWidth || '100%';
@@ -119,7 +101,6 @@
         width: content.rootWidth,
         height: content.rootHeight
       });
-
       if (_state.layoutManager.root) {
         //https://github.com/golden-layout/golden-layout/issues/350
         _state.layoutManager.root.contentItems.forEach(function (item) {
@@ -135,7 +116,6 @@
           _state.initialLayoutContent.content = content.content;
       }
     },
-
     getContent: function (_dom, _state) {
       return {
         content: _state.layoutManager.isInitialised ? _state.layoutManager.toConfig().content : [_state.initialLayoutContent],
@@ -144,9 +124,7 @@
       };
     }
   };
-
   var _newLayout_GoldenLayout = function (config = {}) {
-
     config.initialLayout = config.initialLayout || 'stack';
     config.onWidgetCloseFn = config.onWidgetCloseFn || function (uuid) {};
     config.onWidgetConfigFn = config.onWidgetConfigFn || function (uuid) {};
@@ -154,24 +132,20 @@
     config.allowClose = config.allowClose != null ? config.allowClose : true;
     config.allowResize = config.allowResize != null ? config.allowResize : true;
     config.showHeaders = config.showHeaders != null ? config.showHeaders : true;
-
     var _state = {
       layoutManager: null,
       availableDomEls: {},
       initialLayoutContent: {
-         type: config.initialLayout,
-         content: []
+        type: config.initialLayout,
+        content: []
       }
     };
-
     var _dom = {
       rootDiv: $('<div>').css("height", "90vh").resizable({
         disabled: !config.allowResize
       }).append('<style>.lm_content > div > .panel { height: 100%; width: 100%; position: absolute; overflow: auto;} < /style>')
     };
-
     _statics.init(_dom, _state, config, []);
-
     return {
       render: function () {
         return _dom.rootDiv;
@@ -193,6 +167,5 @@
       }
     };
   };
-
   OliveUI.modules.newLayout_GoldenLayout = _newLayout_GoldenLayout;
 }($, OliveUI, GoldenLayout));

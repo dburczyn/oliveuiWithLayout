@@ -3,13 +3,11 @@
 }(typeof window !== "undefined" ? window : this, function ($) {
   'use strict';
   if (typeof $.fn.popover != 'function') throw 'Bootstrap Required';
-
   var _statics = {
     createWidgetInstance: function (_dom, _sub, _state, uuid, widgetName, addToLayout) {
       var _widgetManifest = OliveUI.widgetsManifests[widgetName];
       if (!_widgetManifest) throw 'Impossible to find the manifest of the widget ' + widgetName;
       if (!OliveUI.modules.newWidgetUI) throw 'Missing newWidgetUI module';
-
       var _widget = OliveUI.modules.newWidgetUI({
         initialView: 'render',
         headerVisible: false,
@@ -28,7 +26,6 @@
           }, configOutput, renderInput);
         } : null
       });
-
       _state.widgetInstances[uuid] = {
         manifest: _widgetManifest,
         widget: _widget,
@@ -37,34 +34,28 @@
         )
       };
       _state.instancesIdList.push(uuid);
-
+      _sub.layoutManager.addDomEl(uuid, _state.widgetInstances[uuid].rootDiv);
       if (addToLayout) {
         _sub.layoutManager.addDomElLayoutConfiguration(uuid);
       }
-
-      _sub.layoutManager.addDomEl(uuid, _state.widgetInstances[uuid].rootDiv);
       _sub.layoutManager.setTitle(uuid, widgetName);
     },
-
     deleteWidgetInstance: function (_state, uuid) {
       if (!_state.widgetInstances[uuid]) return;
       _state.widgetInstances[uuid].rootDiv.remove();
       delete _state.widgetInstances[uuid];
       _state.instancesIdList.splice(_state.instancesIdList.indexOf(uuid), 1);
     },
-
     getWidgetInstanceConfiguration: function (_state, widgetUUID) {
       var _widgetInstance = _state.widgetInstances[widgetUUID];
       if (!_widgetInstance) throw 'Impossible to find the widget instance ' + widgetUUID;
       return _widgetInstance.widget.getContent();
     },
-
     setWidgetInstanceConfiguration: function (_state, widgetUUID, widgetContent) {
       var _widgetInstance = _state.widgetInstances[widgetUUID];
       if (!_widgetInstance) throw 'Impossible to find the widget instance ' + widgetUUID;
       _widgetInstance.widget.setContent(widgetContent);
     },
-
     getContent: function (_sub, _state) {
       var widgetInstancesRet = {};
       $.each(_state.widgetInstances, function (uuid, widgetInstance) {
@@ -73,7 +64,6 @@
           widgetContent: widgetInstance.widget.getContent()
         };
       });
-
       return {
         widgetInstances: widgetInstancesRet,
         widgetInstanceIdList: _state.instancesIdList,
@@ -83,35 +73,27 @@
         }
       };
     },
-
     setContent: function (_dom, _sub, _state, content) {
       content.widgetInstanceIdList = content.widgetInstanceIdList || [];
       content.widgetInstances = content.widgetInstances || {};
       content.layout = content.layout || {};
       content.layout.name = content.layout.name || 'golden-layout';
       content.layout.content = content.layout.content || {};
-
       _state.instancesIdList = [];
       _state.widgetInstances = {};
-
       $.each(content.widgetInstanceIdList, function (i, uuid) {
         var widgetInstanceContent = content.widgetInstances[uuid];
         widgetInstanceContent.widgetContent = widgetInstanceContent.widgetContent || {};
         if (!widgetInstanceContent.manifestName) throw 'Impossible to find the manifestName for the widget instance ' + uuid;
-
         _statics.createWidgetInstance(_dom, _sub, _state, uuid, widgetInstanceContent.manifestName, false);
         _state.widgetInstances[uuid].widget.setContent(widgetInstanceContent.widgetContent);
-
         _sub.layoutManager.addDomEl(uuid, _state.widgetInstances[uuid].rootDiv);
       });
-
       _sub.layoutManager.setContent(content.layout.content);
     }
   };
-
   var OliveUI = function (config = {}) {
     if (!OliveUI.modules.newLayout_GoldenLayout) throw 'Missing newLayout_GoldenLayout module';
-
     var _sub = {
       layoutManager: OliveUI.modules.newLayout_GoldenLayout({
         initialLayout: 'stack', //column stack row
@@ -127,60 +109,49 @@
           var _widgetInstance = _state.widgetInstances[uuid];
           if (!_widgetInstance) throw 'Impossible to find the widget instance ' + uuid;
           _widgetInstance.widget.showRenderView();
-          }
+        }
       })
     };
-
     var _dom = {
       rootDiv: $('<div>').append(
         _sub.layoutManager.render()
       )
     };
-
     var _state = {
       widgetInstances: {},
       instancesIdList: []
     };
-
     return {
       render: function () {
         return _dom.rootDiv;
       },
-
       createWidgetInstance: function (widgetName, uuid) {
         uuid = uuid || OliveUI.utils.generateUUID();
         _statics.createWidgetInstance(_dom, _sub, _state, uuid, widgetName, true);
+        _sub.layoutManager.addDomEl(uuid, _state.widgetInstances[uuid].rootDiv);
         return uuid;
       },
-
       getWidgetInstanceConfiguration: function (widgetUUID) {
         return _statics.getWidgetInstanceConfiguration(_state, widgetUUID);
       },
-
       setWidgetInstanceConfiguration: function (widgetUUID, widgetContent) {
         _statics.setWidgetInstanceConfiguration(_state, widgetUUID, widgetContent);
       },
-
       getContent: function () {
         return _statics.getContent(_sub, _state);
       },
-
       setContent: function (content = {}) {
         _statics.setContent(_dom, _sub, _state, content);
       }
     };
   };
-
   OliveUI.modules = {};
   OliveUI.widgetsManifests = {};
-
   OliveUI.addWidgetManifest = function (widgetManifest) {
     if (!widgetManifest.name) throw 'name missing in widget manifest';
     //TODO: complete manifest check
-
     OliveUI.widgetsManifests[widgetManifest.name] = widgetManifest;
   };
-
   //------------------------------------------------------------------------
   OliveUI.utils = (function () {
     var _utils = {
@@ -190,7 +161,6 @@
           .fadeTo(5000, 500)
           .appendTo((parentDom != null) ? parentDom : $('#mainContainer'));
       },
-
       showSuccess: function (info, parentDom) {
         console.log(info);
         $('<div class="alert alert-success fade in" role="alert"><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' + info + '</div>')
@@ -200,16 +170,13 @@
           })
           .appendTo((parentDom != null) ? parentDom : $('#mainContainer'));
       },
-
       getHost: function () {
         var ret = ((window.location.protocol == '') ? 'http:' : window.location.protocol) + '//' + ((window.location.hostname == '') ? '127.0.0.1' : window.location.hostname) + ((window.location.port != '') ? ':' + window.location.port : '');
         return ret;
       },
-
       getPageUrl: function () {
         return _utils.getHost() + window.location.pathname;
       },
-
       getURLParameter: function (sParam) {
         var sPageURL = window.location.search.substring(1);
         var sURLVariables = sPageURL.split('&');
@@ -220,23 +187,19 @@
         }
         return null;
       },
-
       neverNull: function (param) {
         return param == null ? '' : param;
       },
-
       generateUUID: function () {
         var d = new Date().getTime();
         if (typeof performance !== 'undefined' && typeof performance.now === 'function')
           d += performance.now(); //use high-precision timer if available
-
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
           var r = (d + Math.random() * 16) % 16 | 0;
           d = Math.floor(d / 16);
           return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
         });
       },
-
       callService: function (url, paramsQueryString, postData, successCallback, failureCallback) {
         var serviceUrl = url + (paramsQueryString != null ? '?' + paramsQueryString : '');
         var ajaxConfig = {
@@ -254,7 +217,6 @@
             failureCallback('Error contacting the service: ' + serviceUrl + ' : ' + status + ' ' + error);
           }
         };
-
         if (postData != null) {
           ajaxConfig.type = 'POST';
           ajaxConfig.processData = false;
@@ -266,10 +228,8 @@
             ajaxConfig.data = postData;
           }
         }
-
         $.ajax(ajaxConfig);
       },
-
       createDialogBootstrap: function (content, title, okCallback, onSuccessCallback, onContentLoadedCallback) {
         var modalDiv = document.createElement('div');
         $(modalDiv)
@@ -302,7 +262,6 @@
             onContentLoadedCallback();
           }).modal('show');
       },
-
       readFileAsArrayBuffer: function (file, onLoadFunction) {
         if (!file)
           return;
@@ -317,7 +276,6 @@
         };
         reader.readAsArrayBuffer(file);
       },
-
       readFileAsDataURL: function (file, onLoadFunction) {
         if (!file)
           return;
@@ -332,17 +290,14 @@
         };
         reader.readAsDataURL(file);
       },
-
       ab2str: function (ab) {
         if (!(window.TextDecoder)) throw 'This browser does not support TextDecoder';
         return new TextDecoder("utf-8").decode(ab);
       },
-
       str2ab: function (str) {
         if (!(window.TextEncoder)) throw 'This browser does not support TextEncoder';
         return new TextEncoder().encode(str);
       },
-
       arr2obj: function (arr, idName) {
         var ret = {};
         arr.forEach(function (arrObj) {
@@ -352,7 +307,6 @@
         });
         return ret;
       },
-
       obj2arr: function (obj, idName) {
         var ret = [];
         Object.keys(obj).forEach(function (key) {
@@ -362,11 +316,9 @@
         });
         return ret;
       },
-
       clone: function (obj) {
         return JSON.parse(JSON.stringify(obj));
       },
-
       isStyled: function (className) {
         // var re = new RegExp('(^|,)\\s*\\.' + className + '\\s*(\\,|$)');
         // var ret = false;
@@ -378,7 +330,6 @@
         // });
         return true;
       },
-
       download: function (data, filename, type) {
         var file = new Blob([data], {
           type: type
@@ -398,7 +349,6 @@
           }, 0);
         }
       }
-
     };
     return _utils;
   }());
