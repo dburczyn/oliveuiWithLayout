@@ -21,16 +21,19 @@
   $('#main').prepend(
     $(downloadbutton)
     .text("Download Grid config")
+    .addClass("btn btn-warning")
     .click(function () {
       OliveUI.utils.download(JSON.stringify(oliveUI.getContent()), 'oliveui_backup_' + new Date().toISOString() + '.json', 'application/json');
     }),
     $(uploadbutton)
     .text("Upload Grid config")
+    .addClass("btn btn-warning")
     .click(function () {
       $('#fileUpload').trigger('click');
     }),
     $(cloudsavebutton)
-    .text("Upload Grid config to cloaud")
+    .text("Upload Grid config to cloud")
+    .addClass("btn btn-warning")
     .click(function () {
       configtoup = oliveUI.getContent();
       $.each(configtoup.widgetInstances, function (i, valup) {
@@ -99,7 +102,7 @@
             )
             .append(
               $("<h4/>")
-              .text("Add grid form")
+              .text("Log in using GitHub credentials")
             )
           )
           .append(
@@ -127,6 +130,7 @@
               .append(
                 $(gettokenbutton)
                 .text("Log in")
+                .addClass("btn btn-info")
               )
             ))
           .append( /// footer
@@ -142,9 +146,10 @@
           )
         ));
     $(widgetAddButton)
-      .prependTo($("#main"))
-      .addClass("btn btn-warning")
+      .appendTo($("#nav"))
+      .addClass("btn btn-primary")
       .text("Log in")
+      .css({"float":"right"})
       .click(function () {
         $(optionsModal).modal('show');
       });
