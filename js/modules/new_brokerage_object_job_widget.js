@@ -20,6 +20,7 @@
     var unencodedcontent;
     var jobtileinstance;
     var widgetRepresentation;
+    var jobtype;
     var newbuttoncontainer = document.createElement('div');
     var filecontentfield = document.createElement('textarea');
     var jobpicturefield = document.createElement('input');
@@ -32,7 +33,6 @@
     var modalcontainer = document.createElement('div');
     var modalfooter = document.createElement('div');
     var widgetAddButton = document.createElement('button');
-    var jobtype;
     var returned = {
       type: "JobTile",
       render: function (renderdata, gridrendercontent) {
@@ -45,16 +45,11 @@
         $(widgetAddButton)
           .appendTo($(newbuttoncontainer))
           .addClass("btn btn-info")
-          .text('NEW ');
+          .text('NEW');
         addNewButtonHandler(gridrendercontent);
         return newbuttoncontainer;
       },
     };
-    // function setWidgetAuthHeader(request) {
-    //   if (typeof this.token !== 'undefined' && this.token !== '') {
-    //     request.setRequestHeader("Authorization", "token " + this.token);
-    //   }
-    // }
     function getJobtypeFromRadio() {
       var jobtypesradio = document.getElementsByName('jobtype');
       for (var i = 0; i < jobtypesradio.length; i++) {
@@ -100,12 +95,17 @@
                 $('<button/>')
                 .addClass("close")
                 .attr("type", "button")
-                .attr("data-dismiss", "modal")
                 .text("x")
+                .unbind('click')
+                .on('click', function (e) {
+                  e.stopPropagation();
+                  $(createform).modal('hide');
+                  $(createform).remove();
+                })
               )
               .append(
                 $("<h4/>")
-                .text("Create form")
+                .text("Create/Edit form")
               )
             )
             .append( //body
@@ -143,19 +143,19 @@
                 )
                 .append(
                   $('<p/>')
-                  .text("Picture:")
+                  .text("Picture URL:")
                 )
                 .append(
                   $(jobpicturefield)
-                  .attr("type", "text")
+                  .attr("type", "url")
                 )
                 .append(
                   $('<p/>')
-                  .text("Contact:")
+                  .text("Contact email:")
                 )
                 .append(
                   $(emailaddressfield)
-                  .attr("type", "text")
+                  .attr("type", "email")
                 )
                 .append(
                   $('<p/>')
@@ -229,29 +229,76 @@
                 $('<button/>')
                 .addClass("btn btn-default")
                 .attr("type", "button")
-                .attr("data-dismiss", "modal")
                 .text("Close")
+                .unbind('click')
+                .on('click', function (e) {
+                  e.stopPropagation();
+                  $(createform).modal('hide');
+                  $(createform).remove();
+                })
               )
             )
           )));
     }
-    function prepareDeleteWidgetContentUrl(gridrendercontent) {
-      return gridrendercontent.indexurl + "/" + currentresponse.name;
-    }
     function deleteWidgetContentFile(gridrendercontent) {
       $.ajax({
-          url: prepareDeleteWidgetContentUrl(gridrendercontent),
+          url: gridrendercontent.indexurl + "/" + currentresponse.name,
           beforeSend: function (xhr) {
-            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
-              xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
-            }
+            xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
           },
           type: 'DELETE',
           data: '{"message": "delete file","sha":"' + currentresponse.sha + '" }',
         })
         .done(function () {
           $(expandedWidgetView).modal('hide');
+          $(expandedWidgetView).remove();
           $('.glyphicon-refresh').trigger('click');
+        });
+    }
+    function createWidgetContentFile(gridrendercontent) {
+      produceWidgetInstanceContent();
+      $.ajax({
+          url: gridrendercontent.indexurl + '/' + widgetInstanceContent.updatedat,
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+          },
+          type: 'PUT',
+          data: '{"message": "create file","content":"' + btoa(JSON.stringify(widgetInstanceContent)) + '" }',
+        })
+        .done(function () {
+          $(createform).modal('hide');
+          $(createform).remove();
+          updateIndexlist(gridrendercontent);
+        });
+    }
+    function updateIndexlist(gridrendercontent) {
+      var updatedlistcontent = JSON.parse(gridrendercontent.content);
+      updatedlistcontent.list.push({
+        createdat: widgetInstanceContent.createdat,
+        updatedat: widgetInstanceContent.updatedat,
+        datetype: widgetInstanceContent.datetype,
+        name: widgetInstanceContent.name,
+        type: widgetInstanceContent.type
+      });
+      if (widgetInstanceContent.updatedat !== widgetInstanceContent.createdat) {
+        updateIndexlistForEditDelete(updatedlistcontent);
+      }
+      /// update indexlist
+      $.ajax({
+          url: gridrendercontent.indexurl + '/' + gridrendercontent.indexfilename,
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+          },
+          type: 'PUT',
+          data: '{"message": "create indexlist","sha":"' + gridrendercontent.listsha + '","content":"' + btoa(JSON.stringify(updatedlistcontent)) + '" }',
+          dataType: 'json',
+        })
+        .done(function () {
+          if (widgetInstanceContent.updatedat !== widgetInstanceContent.createdat) {
+            deleteWidgetContentFile(gridrendercontent);
+          } else {
+            $('.glyphicon-refresh').trigger('click');
+          }
         });
     }
     function updateIndexlistForEditDelete(updatedlistcontent) {
@@ -261,59 +308,11 @@
         }
       }
     }
-    function prepareCreateWidgetContentUrl(gridrendercontent) {
-      return gridrendercontent.indexurl + '/' + widgetInstanceContent.updatedat;
-    }
-    function createWidgetContentFile(gridrendercontent) {
-      produceWidgetInstanceContent();
-      $.ajax({
-          url: prepareCreateWidgetContentUrl(gridrendercontent),
-          beforeSend: function (xhr) {
-            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
-              xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
-            }
-          },
-          type: 'PUT',
-          data: '{"message": "create file","content":"' + btoa(JSON.stringify(widgetInstanceContent)) + '" }',
-        })
-        .done(function () {
-          $(createform).modal('hide');
-          var updatedlistcontent = JSON.parse(gridrendercontent.content);
-          updatedlistcontent.list.push({
-            createdat: widgetInstanceContent.createdat,
-            updatedat: widgetInstanceContent.updatedat,
-            datetype: widgetInstanceContent.datetype,
-            name: widgetInstanceContent.name,
-            type: widgetInstanceContent.type
-          });
-          if (widgetInstanceContent.updatedat !== widgetInstanceContent.createdat) {
-            updateIndexlistForEditDelete(updatedlistcontent);
-          }
-          /// update indexlist
-          $.ajax({
-              url: gridrendercontent.indexurl + '/' + gridrendercontent.indexfilename,
-              beforeSend: function (xhr) {
-                if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
-                  xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
-                }
-              },
-              type: 'PUT',
-              data: '{"message": "create indexlist","sha":"' + gridrendercontent.listsha + '","content":"' + btoa(JSON.stringify(updatedlistcontent)) + '" }',
-              dataType: 'json',
-            })
-            .done(function () {
-              if (widgetInstanceContent.updatedat !== widgetInstanceContent.createdat) {
-                deleteWidgetContentFile(gridrendercontent);
-              } else {
-                $('.glyphicon-refresh').trigger('click');
-              }
-            });
-        });
-    }
     function addCreateFormSubmitHandler(gridrendercontent) {
       $(createform).on('submit', function (e) {
         e.preventDefault();
         createWidgetContentFile(gridrendercontent);
+        $('#summernote').summernote('destroy');
       });
     }
     function createFrontWidgetTile(gridrendercontent) {
@@ -331,6 +330,7 @@
             $("<div/>")
             .addClass("boxes-align")
             .attr("id", jobtileinstance.updatedat)
+            .unbind('click')
             .on('click', function () {
               showInnerWidgetModal($(this).attr("id"), gridrendercontent);
             })
@@ -381,8 +381,13 @@
                 $('<button/>')
                 .addClass("close")
                 .attr("type", "button")
-                .attr("data-dismiss", "modal")
                 .text("x")
+                .unbind('click')
+                .on('click', function (e) {
+                  e.stopPropagation();
+                  $(expandedWidgetView).modal('hide');
+                  $(expandedWidgetView).remove();
+                })
               )
               .append(
                 $('<img>')
@@ -452,18 +457,24 @@
                 $('<button/>')
                 .addClass("btn btn-default")
                 .attr("type", "button")
-                .attr("data-dismiss", "modal")
                 .text("Close")
+                .unbind('click')
+                .on('click', function (e) {
+                  e.stopPropagation();
+                  $(expandedWidgetView).modal('hide');
+                  $(expandedWidgetView).remove();
+                })
               )
             )
           )));
-      if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined" && gridrendercontent.admin !== "" && typeof gridrendercontent.admin !== "undefined") {
+      if (typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin === "admin") {
         $(modalfooter)
-          .append(
+          .prepend(
             $('<button/>')
-            .addClass("btn btn-default")
+            .addClass("btn btn-danger")
             .attr("type", "button")
             .text("Delete")
+            .unbind('click')
             .on('click', function (e) {
               e.stopPropagation();
               var action = confirm('Are you sure you wish to delete this item ? It cannot be undone!');
@@ -476,9 +487,7 @@
               $.ajax({
                   url: gridrendercontent.indexurl + '/' + gridrendercontent.indexfilename,
                   beforeSend: function (xhr) {
-                    if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
-                      xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
-                    }
+                    xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
                   },
                   type: 'PUT',
                   data: '{"message": "create indexlist","sha":"' + gridrendercontent.listsha + '","content":"' + btoa(JSON.stringify(updatedlistcontent)) + '" }',
@@ -489,17 +498,18 @@
                 });
             })
           )
-          .append(
+          .prepend(
             $('<button/>')
             .addClass("btn btn-info")
             .attr("type", "button")
             .attr("data-toggle", "modal")
-            .attr("data-target", createform)
             .attr("data-backdrop", "false")
             .text("Edit")
+            .unbind('click')
             .on('click', function (e) {
               e.stopPropagation();
               $(expandedWidgetView).modal('hide');
+              $(expandedWidgetView).remove();
               createform = document.createElement('div');
               makeCreateForm();
               addCreateFormSubmitHandler(gridrendercontent);
@@ -523,7 +533,6 @@
           $(filecontentfield).val('');
           $(emailaddressfield).val('');
           $(jobpicturefield).val('');
-          // $(modalcontainer).appendTo($(document.body));
           $(createform).modal('show');
         });
     }
@@ -547,7 +556,7 @@
       $.ajax({
           url: gridrendercontent.indexurl + "/" + id,
           beforeSend: function (xhr) {
-            if (gridrendercontent.user !== "" && gridrendercontent.pass !== "" && typeof gridrendercontent.user !== "undefined" && typeof gridrendercontent.pass !== "undefined") {
+            if (gridrendercontent.admin !== "bad" && typeof gridrendercontent.admin !== "undefined") {
               xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
             }
           },

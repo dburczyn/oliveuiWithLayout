@@ -5,17 +5,27 @@
     oliveUI.render()
   );
 
+  /////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////
+
+  var configrepourl = "https://api.github.com/repos/bocbrokeragetest/brokerage";
+
+  /////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////
+
+
   var downloadbutton = document.createElement('button');
   var uploadbutton = document.createElement('button');
   var cloudsavebutton = document.createElement('button');
-  var configrepourl = "https://api.github.com/repos/bocbrokeragetest/brokerage";
   var listsha = '';
   var user = document.createElement('input');
   var pass = document.createElement('input');
-  var gettokenbutton = document.createElement('button');
+  var loginFormSubmit = document.createElement('input');
   var configform = document.createElement('form');
   var optionsModal = document.createElement('div');
-  var widgetAddButton = document.createElement('button');
+  var loginButton = document.createElement('button');
   var newWidgetInstance = document.createElement('button');
   var isadmin;
   $('#main').prepend(
@@ -54,7 +64,6 @@
       });
     }),
     $('<input id="fileUpload" type="file" style="display: none;">').change(function (e) {
-      var fileName = e.target.files[0].name;
       OliveUI.utils.readFileAsArrayBuffer(e.target.files[0], function (content) {
         oliveUI.setContent(JSON.parse(OliveUI.utils.ab2str(content)));
       });
@@ -72,13 +81,15 @@
     }).done(function (response) {
       listsha = response.sha;
       oliveUI.setContent(JSON.parse(atob(response.content)));
-      $(".glyphicon-wrench").hide();
-      $(newWidgetInstance).hide();
-      $(uploadbutton).hide();
-      $(downloadbutton).hide();
-      $(cloudsavebutton).hide();
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+      if (jqXHR.status == '404') {
+        alert("cannot find config online");
+      }
     });
   });
+
+
+
   function addGithubLoginForm(configrepourl) {
     $(optionsModal)
       .prependTo($(document.body))
@@ -118,6 +129,7 @@
               .append(
                 $(user)
                 .attr("type", "text")
+                .prop('required',true)
               )
               .append(
                 $('<p/>')
@@ -126,11 +138,12 @@
               .append(
                 $(pass)
                 .attr("type", "password")
+                .prop('required',true)
               )
               .append(
-                $(gettokenbutton)
-                .text("Log in")
-                .addClass("btn btn-info")
+                $(loginFormSubmit)
+                .attr("value", "Submit")
+                .attr("type", "submit")
               )
             ))
           .append( /// footer
@@ -145,11 +158,13 @@
             )
           )
         ));
-    $(widgetAddButton)
+    $(loginButton)
       .appendTo($("#nav"))
       .addClass("btn btn-primary")
       .text("Log in")
-      .css({"float":"right"})
+      .css({
+        "float": "right"
+      })
       .click(function () {
         $(optionsModal).modal('show');
       });
@@ -160,10 +175,25 @@
       .click(function () {
         oliveUI.createWidgetInstance('Grid Widget');
       });
-    $(gettokenbutton)
-      .unbind('click')
-      .on('click', function (e) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      $(configform).on('submit', function (e) {
         e.preventDefault();
+
         $.ajax({
             url: configrepourl + "/collaborators/" + $(user).val() + "/permission",
             beforeSend: function (xhr) {
@@ -183,20 +213,13 @@
               listsha = response.sha;
               var config = JSON.parse(atob(response.content));
               $.each(config.widgetInstances, function (i, val) {
-                if (val.manifestName === 'Grid Widget'); {
+                if (val.manifestName === 'Grid Widget') {
                   val.widgetContent.user = $(user).val();
                   val.widgetContent.pass = $(pass).val();
                   val.widgetContent.admin = isadmin;
                 }
               });
               oliveUI.setContent(config);
-              $(".glyphicon-wrench").hide();
-              $(newWidgetInstance).hide();
-              $(newWidgetInstance).hide();
-              $(uploadbutton).hide();
-              $(newWidgetInstance).hide();
-              $(downloadbutton).hide();
-              $(cloudsavebutton).hide();
               if (isadmin === "admin") {
                 $(".glyphicon-wrench").show();
                 $(newWidgetInstance).show();
@@ -204,21 +227,7 @@
                 $(downloadbutton).show();
                 $(cloudsavebutton).show();
               }
-            }).fail(function (response) {
-              listsha = response.sha;
-              var config = JSON.parse(atob(response.content));
-              $.each(config.widgetInstances, function (i, val) {
-                if (val.manifestName === 'Grid Widget'); {
-                  val.widgetContent.user = $(user).val();
-                  val.widgetContent.pass = $(pass).val();
-                }
-              });
-              oliveUI.setContent(config);
-              $(".glyphicon-wrench").hide();
-              $(newWidgetInstance).hide();
-              $(uploadbutton).hide();
-              $(downloadbutton).hide();
-              $(cloudsavebutton).hide();
+            }).fail(function () {
               if (isadmin === "admin") {
                 $(".glyphicon-wrench").show();
                 $(newWidgetInstance).show();
@@ -227,11 +236,79 @@
                 $(cloudsavebutton).show();
               }
             });
-          }).fail(function (response) {
+          })
+
+
+
+
+
+
+
+          .fail(function (jqXHR) {
+            if (jqXHR.status == '401') {
+                          alert("invalid credentials entering unauthenticated mode");
+
+
+
+                          $.ajax({
+                            url: configrepourl + "/contents/gridconfig.json",
+                            beforeSend: function (xhr) {
+                                          xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
+
+                            },
+                            dataType: 'json'
+                          }).done(function (response) {
+                            listsha = response.sha;
+                            var config = JSON.parse(atob(response.content));
+                            $.each(config.widgetInstances, function (i, val) {
+                              if (val.manifestName === 'Grid Widget'); {
+                                       val.widgetContent.admin = '';
+                              }
+                            });
+                            oliveUI.setContent(config);
+                            $(".glyphicon-wrench").hide();
+                            $(newWidgetInstance).hide();
+                            $(uploadbutton).hide();
+                            $(downloadbutton).hide();
+                            $(cloudsavebutton).hide();
+                          })
+
+
+
+
+
+
+
+
+                          .fail(function () {
+                            alert("No config found online contact your administrator");
+                          });
+
+
+
+
+
+
+
+
+
+            } else if (jqXHR.status == '404') {
+                alert("bad config repo url contact your administrator");
+            }
+
+
+            else if (jqXHR.status == '403') {
+
+
+
+
+
+
             $.ajax({
               url: configrepourl + "/contents/gridconfig.json",
               beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
+                            xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
+
               },
               dataType: 'json'
             }).done(function (response) {
@@ -241,7 +318,7 @@
                 if (val.manifestName === 'Grid Widget'); {
                   val.widgetContent.user = $(user).val();
                   val.widgetContent.pass = $(pass).val();
-                  val.widgetContent.admin = isadmin;
+                  val.widgetContent.admin = "user";
                 }
               });
               oliveUI.setContent(config);
@@ -250,27 +327,50 @@
               $(uploadbutton).hide();
               $(downloadbutton).hide();
               $(cloudsavebutton).hide();
-            }).fail(function (response) {
-              listsha = response.sha;
-              var config = JSON.parse(atob(response.content));
-              $.each(config.widgetInstances, function (i, val) {
-                if (val.manifestName === 'Grid Widget'); {
-                  val.widgetContent.user = $(user).val();
-                  val.widgetContent.pass = $(pass).val();
-                  val.widgetContent.admin = isadmin;
-                }
-              });
-              oliveUI.setContent(config);
+            })
+
+            .fail(function () {
+              alert("No config found online contact your administrator");
             });
+
+
+
+
+          }
+
+
+
+
+
           });
+
+
+
+
+
+
         $(optionsModal).modal('hide');
       });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   }
+
+
+
   addGithubLoginForm(configrepourl);
-  //   setTimeout(function() {
-  //     $('.glyphicon-wrench').trigger('click');
-  //  }, 3000);
-  // $(function() {
-  // $('.glyphicon-wrench').trigger('click');
-  // });
+
+
+
 }(jQuery, OliveUI));

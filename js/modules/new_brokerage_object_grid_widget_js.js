@@ -21,6 +21,8 @@
       var grid = {
         type: "Grid",
         render: function (gridrendercontent) {
+if (typeof gridrendercontent.admin !=='undefined' && gridrendercontent.admin !== 'bad' && gridrendercontent.admin !== '')   // check if authorized !!!!!!!!
+{
           var getAdminAjax = $.ajax({
               url: gridrendercontent.indexurl.split('contents')[0] + "collaborators/" + gridrendercontent.user + "/permission",
               beforeSend: function (xhr) {
@@ -31,9 +33,22 @@
             .done(function (response) {
               gridrendercontent.admin = response.permission;
             })
-            .fail(function () {
-              gridrendercontent.admin = "";
+            .fail(function (jqXHR) {
+
+               if (jqXHR.status == '403') {
+                gridrendercontent.admin = "user";
+              }
+
+              else {
+                alert("unknown error occured");
+              }
+
             });
+
+
+          }
+
+
           if (typeof gridrendercontent.indexurl !== 'undefined' && typeof gridrendercontent.indexfilename !== 'undefined' && gridrendercontent.indexurl !== '' && gridrendercontent.indexfilename !== '') {
             var getDataAjax = $.ajax({
                 url: gridrendercontent.indexurl + "/" + gridrendercontent.indexfilename,
@@ -95,16 +110,15 @@
               }
             };
           }
-          if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin != "")) {
+          if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin === "admin")) {
             var newbuttoninstance = Object.assign({}, widgetlist[j]);
             if (typeof newbuttoninstance.makeCreateButton === "function" && typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin !== '' && widgetlist[j].type === gridrendercontent.type) {
               var newbutton = newbuttoninstance.makeCreateButton(gridrendercontent);
-              // $(widgetcontainerinner).append(newbutton);
               $(newbutton).clone(true,true).appendTo(widgetcontainerinner);
             }
           }
         }
-        if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin != "")) {
+        if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin === "admin")) {
           $(widgetcontainerinner)
             .append(
               $('<button/>')
