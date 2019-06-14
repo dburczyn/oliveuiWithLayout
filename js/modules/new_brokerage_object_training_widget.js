@@ -56,7 +56,7 @@
       },
     };
     function setWidgetAuthHeader(request) {
-      if (this.token !== "") {
+      if (this.token !== "" && typeof this.token !== "undefined")  {
         request.setRequestHeader("Authorization", "token " + this.token);
       }
     }

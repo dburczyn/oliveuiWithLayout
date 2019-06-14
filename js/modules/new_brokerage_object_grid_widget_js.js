@@ -105,7 +105,8 @@ if (typeof gridrendercontent.admin !=='undefined' && gridrendercontent.admin !==
               if (resultsJSON[i].type === gridrendercontent.type) {
                 instance = Object.assign({}, widgetlist[j]);
                 if (typeof instance !== 'undefined') {
-                  $(widgetcontainerinner).append(instance.render(resultsJSON[i], gridrendercontent)); // here lands all content of widget instances
+                  var newinstance = instance.render(resultsJSON[i], gridrendercontent);
+                  $(newinstance).clone(true,true).appendTo(widgetcontainerinner);
                 }
               }
             };
