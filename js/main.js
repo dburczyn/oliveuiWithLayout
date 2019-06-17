@@ -4,18 +4,13 @@
   $('#main').append(
     oliveUI.render()
   );
-
   /////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////
-
   var configrepourl = "https://api.github.com/repos/bocbrokeragetest/brokerage";
-
   /////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////
-
-
   var downloadbutton = document.createElement('button');
   var uploadbutton = document.createElement('button');
   var cloudsavebutton = document.createElement('button');
@@ -81,15 +76,13 @@
     }).done(function (response) {
       listsha = response.sha;
       oliveUI.setContent(JSON.parse(atob(response.content)));
+      $(".glyphicon-wrench").hide();
     }).fail(function (jqXHR, textStatus, errorThrown) {
       if (jqXHR.status == '404') {
         alert("cannot find config online");
       }
     });
   });
-
-
-
   function addGithubLoginForm(configrepourl) {
     $(optionsModal)
       .prependTo($(document.body))
@@ -129,7 +122,7 @@
               .append(
                 $(user)
                 .attr("type", "text")
-                .prop('required',true)
+                .prop('required', true)
               )
               .append(
                 $('<p/>')
@@ -138,7 +131,7 @@
               .append(
                 $(pass)
                 .attr("type", "password")
-                .prop('required',true)
+                .prop('required', true)
               )
               .append(
                 $(loginFormSubmit)
@@ -175,202 +168,111 @@
       .click(function () {
         oliveUI.createWidgetInstance('Grid Widget');
       });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      $(configform).on('submit', function (e) {
-        e.preventDefault();
-
-        $.ajax({
-            url: configrepourl + "/collaborators/" + $(user).val() + "/permission",
+    $(configform).on('submit', function (e) {
+      e.preventDefault();
+      $.ajax({
+          url: configrepourl + "/collaborators/" + $(user).val() + "/permission",
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
+          },
+          type: 'GET',
+        })
+        .done(function (response) {
+          isadmin = response.permission;
+          $.ajax({
+            url: configrepourl + "/contents/gridconfig.json",
             beforeSend: function (xhr) {
               xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
             },
-            type: 'GET',
-          })
-          .done(function (response) {
-            isadmin = response.permission;
-            $.ajax({
-              url: configrepourl + "/contents/gridconfig.json",
-              beforeSend: function (xhr) {
-                xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
-              },
-              dataType: 'json'
-            }).done(function (response) {
-              listsha = response.sha;
-              var config = JSON.parse(atob(response.content));
-              $.each(config.widgetInstances, function (i, val) {
-                if (val.manifestName === 'Grid Widget') {
-                  val.widgetContent.user = $(user).val();
-                  val.widgetContent.pass = $(pass).val();
-                  val.widgetContent.admin = isadmin;
-                }
-              });
-              oliveUI.setContent(config);
-              if (isadmin === "admin") {
-                $(".glyphicon-wrench").show();
-                $(newWidgetInstance).show();
-                $(uploadbutton).show();
-                $(downloadbutton).show();
-                $(cloudsavebutton).show();
-              }
-            }).fail(function () {
-              if (isadmin === "admin") {
-                $(".glyphicon-wrench").show();
-                $(newWidgetInstance).show();
-                $(uploadbutton).show();
-                $(downloadbutton).show();
-                $(cloudsavebutton).show();
+            dataType: 'json'
+          }).done(function (response) {
+            listsha = response.sha;
+            var config = JSON.parse(atob(response.content));
+            $.each(config.widgetInstances, function (i, val) {
+              if (val.manifestName === 'Grid Widget') {
+                val.widgetContent.user = $(user).val();
+                val.widgetContent.pass = $(pass).val();
+                val.widgetContent.admin = isadmin;
               }
             });
-          })
-
-
-
-
-
-
-
-          .fail(function (jqXHR) {
-            if (jqXHR.status == '401') {
-                          alert("invalid credentials entering unauthenticated mode");
-
-
-
-                          $.ajax({
-                            url: configrepourl + "/contents/gridconfig.json",
-                            beforeSend: function (xhr) {
-                                          xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
-
-                            },
-                            dataType: 'json'
-                          }).done(function (response) {
-                            listsha = response.sha;
-                            var config = JSON.parse(atob(response.content));
-                            $.each(config.widgetInstances, function (i, val) {
-                              if (val.manifestName === 'Grid Widget'); {
-                                       val.widgetContent.admin = '';
-                              }
-                            });
-                            oliveUI.setContent(config);
-                            $(".glyphicon-wrench").hide();
-                            $(newWidgetInstance).hide();
-                            $(uploadbutton).hide();
-                            $(downloadbutton).hide();
-                            $(cloudsavebutton).hide();
-                          })
-
-
-
-
-
-
-
-
-                          .fail(function () {
-                            alert("No config found online contact your administrator");
-                          });
-
-
-
-
-
-
-
-
-
-            } else if (jqXHR.status == '404') {
-                alert("bad config repo url contact your administrator");
+            oliveUI.setContent(config);
+            if (isadmin === "admin") {
+              $(".glyphicon-wrench").show();
+              $(newWidgetInstance).show();
+              $(uploadbutton).show();
+              $(downloadbutton).show();
+              $(cloudsavebutton).show();
             }
-
-
-            else if (jqXHR.status == '403') {
-
-
-
-
-
-
-            $.ajax({
-              url: configrepourl + "/contents/gridconfig.json",
-              beforeSend: function (xhr) {
-                            xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
-
-              },
-              dataType: 'json'
-            }).done(function (response) {
-              listsha = response.sha;
-              var config = JSON.parse(atob(response.content));
-              $.each(config.widgetInstances, function (i, val) {
-                if (val.manifestName === 'Grid Widget'); {
-                  val.widgetContent.user = $(user).val();
-                  val.widgetContent.pass = $(pass).val();
-                  val.widgetContent.admin = "user";
-                }
-              });
-              oliveUI.setContent(config);
-              $(".glyphicon-wrench").hide();
-              $(newWidgetInstance).hide();
-              $(uploadbutton).hide();
-              $(downloadbutton).hide();
-              $(cloudsavebutton).hide();
-            })
-
-            .fail(function () {
-              alert("No config found online contact your administrator");
-            });
-
-
-
-
-          }
-
-
-
-
-
+          }).fail(function () {
+            if (isadmin === "admin") {
+              $(".glyphicon-wrench").show();
+              $(newWidgetInstance).show();
+              $(uploadbutton).show();
+              $(downloadbutton).show();
+              $(cloudsavebutton).show();
+            }
           });
-
-
-
-
-
-
-        $(optionsModal).modal('hide');
-      });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        })
+        .fail(function (jqXHR) {
+          if (jqXHR.status == '401') {
+            alert("invalid credentials entering unauthenticated mode");
+            $.ajax({
+                url: configrepourl + "/contents/gridconfig.json",
+                beforeSend: function (xhr) {
+                  xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
+                },
+                dataType: 'json'
+              }).done(function (response) {
+                listsha = response.sha;
+                var config = JSON.parse(atob(response.content));
+                $.each(config.widgetInstances, function (i, val) {
+                  if (val.manifestName === 'Grid Widget'); {
+                    val.widgetContent.admin = '';
+                  }
+                });
+                oliveUI.setContent(config);
+                $(".glyphicon-wrench").hide();
+                $(newWidgetInstance).hide();
+                $(uploadbutton).hide();
+                $(downloadbutton).hide();
+                $(cloudsavebutton).hide();
+              })
+              .fail(function () {
+                alert("No config found online contact your administrator");
+              });
+          } else if (jqXHR.status == '404') {
+            alert("bad config repo url contact your administrator");
+          } else if (jqXHR.status == '403') {
+            $.ajax({
+                url: configrepourl + "/contents/gridconfig.json",
+                beforeSend: function (xhr) {
+                  xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
+                },
+                dataType: 'json'
+              }).done(function (response) {
+                listsha = response.sha;
+                var config = JSON.parse(atob(response.content));
+                $.each(config.widgetInstances, function (i, val) {
+                  if (val.manifestName === 'Grid Widget'); {
+                    val.widgetContent.user = $(user).val();
+                    val.widgetContent.pass = $(pass).val();
+                    val.widgetContent.admin = "user";
+                  }
+                });
+                oliveUI.setContent(config);
+                $(".glyphicon-wrench").hide();
+                $(newWidgetInstance).hide();
+                $(uploadbutton).hide();
+                $(downloadbutton).hide();
+                $(cloudsavebutton).hide();
+              })
+              .fail(function () {
+                alert("No config found online contact your administrator");
+              });
+          }
+        });
+      $(optionsModal).modal('hide');
+    });
   }
-
-
-
   addGithubLoginForm(configrepourl);
-
-
-
 }(jQuery, OliveUI));

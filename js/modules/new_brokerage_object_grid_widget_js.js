@@ -21,7 +21,7 @@
       var grid = {
         type: "Grid",
         render: function (gridrendercontent) {
-if (typeof gridrendercontent.admin !=='undefined' && gridrendercontent.admin !== 'bad' && gridrendercontent.admin !== '')   // check if authorized !!!!!!!!
+if (typeof gridrendercontent.admin !=='undefined' && gridrendercontent.admin !== 'bad' && gridrendercontent.admin !== '' && typeof gridrendercontent.indexurl !=='undefined' && gridrendercontent.indexurl !== '')   // check if authorized !!!!!!!!
 {
           var getAdminAjax = $.ajax({
               url: gridrendercontent.indexurl.split('contents')[0] + "collaborators/" + gridrendercontent.user + "/permission",
