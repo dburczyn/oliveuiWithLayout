@@ -18,55 +18,54 @@
     };
     var currentresponse;
     var unencodedcontent;
-    var jobtileinstance;
 
     var returned = {
       type: "JobTile",
       render: function (renderdata, gridrendercontent) {
-             jobtileinstance = renderdata;
-        return createFrontWidgetTile(gridrendercontent);
+        return createFrontWidgetTile(renderdata,gridrendercontent);
       },
       makeCreateButton: function (gridrendercontent) {
-        return  addNewButtonHandler(gridrendercontent);
+        return addNewButtonHandler(gridrendercontent);
       },
     };
 
     function produceWidgetInstanceContent(createform) {
-      widgetInstanceContent = {};
-      widgetInstanceContent.description = $(filecontentfield).val();
-      widgetInstanceContent.picture = $(jobpicturefield).val();
-      widgetInstanceContent.email = $(emailaddressfield).val();
-      widgetInstanceContent.createdat = $(createdatfield).val();
-      widgetInstanceContent.updatedat = $(updatedatfield).val();
+      var widgetInstanceContent = {};
+      widgetInstanceContent.description = $('#summernote').summernote('code');
+      widgetInstanceContent.picture = $(createform).find($('input[name="jobpicturefield"]')).val();
+      widgetInstanceContent.email = $(createform).find($('input[name="emailaddressfield"]')).val();
+      widgetInstanceContent.createdat = $(createform).find($('input[name="createdatfield"]')).val();
+      widgetInstanceContent.updatedat = $(createform).find($('input[name="updatedatfield"]')).val();
       widgetInstanceContent.type = returned.type;
-      widgetInstanceContent.name = $(filenamefield).val();
-      $('input[name="jobtype"]').each(function(){
-        if ($(this).prop('checked')===true) {
-          widgetInstanceContent.datetype=$(this).val();
+      widgetInstanceContent.name = $(createform).find($('input[name="filenamefield"]')).val();
+      $('input[name="jobtype"]').each(function () {
+        if ($(this).prop('checked') === true) {
+          widgetInstanceContent.datetype = $(this).val();
         }
       });
       return widgetInstanceContent;
     }
-    function makeCreateForm(edit,gridrendercontent) {
+
+    function makeCreateForm(edit, gridrendercontent) {
       $(document).ready(function () {
         $('#summernote').summernote();
       });
       var createform = document.createElement('div');
-          var filecontentfield = document.createElement('textarea');
-    var jobpicturefield = document.createElement('input');
-    var emailaddressfield = document.createElement('input');
-    var createdatfield = document.createElement('input');
-    var updatedatfield = document.createElement('input');
-    var filenamefield = document.createElement('input');
+      var filecontentfield = document.createElement('textarea');
+      var jobpicturefield = document.createElement('input');
+      var emailaddressfield = document.createElement('input');
+      var createdatfield = document.createElement('input');
+      var updatedatfield = document.createElement('input');
+      var filenamefield = document.createElement('input');
 
 
-        $(createform)
+      $(createform)
         .addClass("modal")
         .attr("role", "dialog")
         .attr("data-backdrop", "false")
         .on('submit', function (e) {
           e.preventDefault();
-          createWidgetContentFile(gridrendercontent,createform);
+          createWidgetContentFile(gridrendercontent, createform);
           $('#summernote').summernote('destroy');
         })
         .append(
@@ -105,12 +104,14 @@
                   $(createdatfield)
                   .attr("type", "text")
                   .attr("hidden", "true")
+                  .attr("name", "createdatfield")
                   .val(new Date().getTime())
                 )
                 .append(
                   $(updatedatfield)
                   .attr("type", "text")
                   .attr("hidden", "true")
+                  .attr("name", "updatedatfield")
                   .val($(createdatfield).val())
                 )
                 .append(
@@ -120,6 +121,8 @@
                 .append(
                   $(filenamefield)
                   .attr("type", "text")
+                  .attr("name", "filenamefield")
+
                 )
                 .append(
                   $('<p/>')
@@ -137,6 +140,7 @@
                 .append(
                   $(jobpicturefield)
                   .attr("type", "url")
+                  .attr("name", "jobpicturefield")
                 )
                 .append(
                   $('<p/>')
@@ -145,6 +149,7 @@
                 .append(
                   $(emailaddressfield)
                   .attr("type", "email")
+                  .attr("name", "emailaddressfield")
                 )
                 .append(
                   $('<p/>')
@@ -229,31 +234,30 @@
             )
           ));
 
-if (edit==='edit'){
+      if (edit === 'edit') {
 
-  var updatedat = new Date().getTime();
-  $(updatedatfield).val(updatedat);
-  $(createdatfield).val(unencodedcontent.createdat);
-  $(filenamefield).val(unencodedcontent.name);
-  $(filecontentfield).val(unencodedcontent.description);
-  $(emailaddressfield).val(unencodedcontent.email);
-  $(jobpicturefield).val(unencodedcontent.picture);
+        var updatedat = new Date().getTime();
+        $(updatedatfield).val(updatedat);
+        $(createdatfield).val(unencodedcontent.createdat);
+        $(filenamefield).val(unencodedcontent.name);
+        $(filecontentfield).val(unencodedcontent.description);
+        $(emailaddressfield).val(unencodedcontent.email);
+        $(jobpicturefield).val(unencodedcontent.picture);
 
-  $(document).ready(function () {
-  $('input[name="jobtype"]').each(function(){
-    if (unencodedcontent.datetype === $(this).val()) {
-      $(this).prop('checked',true);
-    }
-  });
-  });
-
-
-}
+        $(document).ready(function () {
+          $('input[name="jobtype"]').each(function () {
+            if (unencodedcontent.datetype === $(this).val()) {
+              $(this).prop('checked', true);
+            }
+          });
+        });
 
 
-              return createform;
+      }
+      return createform;
 
     }
+
     function deleteWidgetContentFile(gridrendercontent) {
       $.ajax({
           url: gridrendercontent.indexurl + "/" + currentresponse.name,
@@ -267,8 +271,9 @@ if (edit==='edit'){
           $('.glyphicon-refresh').trigger('click');
         });
     }
-    function createWidgetContentFile(gridrendercontent,createform) {
-      produceWidgetInstanceContent(createform);
+
+    function createWidgetContentFile(gridrendercontent, createform) {
+      var widgetInstanceContent =produceWidgetInstanceContent(createform);
       $.ajax({
           url: gridrendercontent.indexurl + '/' + widgetInstanceContent.updatedat,
           beforeSend: function (xhr) {
@@ -280,10 +285,11 @@ if (edit==='edit'){
         .done(function () {
           $(createform).modal('hide');
           $(createform).remove();
-          updateIndexlist(gridrendercontent);
+          updateIndexlist(gridrendercontent,widgetInstanceContent);
         });
     }
-    function updateIndexlist(gridrendercontent) {
+
+    function updateIndexlist(gridrendercontent,widgetInstanceContent) {
       var updatedlistcontent = JSON.parse(gridrendercontent.content);
       updatedlistcontent.list.push({
         createdat: widgetInstanceContent.createdat,
@@ -313,6 +319,7 @@ if (edit==='edit'){
           }
         });
     }
+
     function updateIndexlistForEditDelete(updatedlistcontent) {
       for (var i = 0; i < updatedlistcontent.list.length; i++) {
         if (updatedlistcontent.list[i].updatedat == currentresponse.name) {
@@ -321,10 +328,10 @@ if (edit==='edit'){
       }
     }
 
-    function createFrontWidgetTile(gridrendercontent) {
+    function createFrontWidgetTile(renderdata,gridrendercontent) {
       var widgetRepresentation = document.createElement('div');
-      var parsedcreatedat = new Date(parseInt(jobtileinstance.createdat)).toLocaleDateString(jobStatics.locale, jobStatics.localeOptions);
-      var parsedupdatedat = new Date(parseInt(jobtileinstance.updatedat)).toLocaleDateString(jobStatics.locale, jobStatics.localeOptions);
+      var parsedcreatedat = new Date(parseInt(renderdata.createdat)).toLocaleDateString(jobStatics.locale, jobStatics.localeOptions);
+      var parsedupdatedat = new Date(parseInt(renderdata.updatedat)).toLocaleDateString(jobStatics.locale, jobStatics.localeOptions);
       $(widgetRepresentation)
         .addClass("col-md-3 cms-boxes-outer")
         .append(
@@ -336,7 +343,7 @@ if (edit==='edit'){
           .append(
             $("<div/>")
             .addClass("boxes-align")
-            .attr("id", jobtileinstance.updatedat)
+            .attr("id", renderdata.updatedat)
             .unbind('click')
             .on('click', function () {
               showInnerWidgetModal($(this).attr("id"), gridrendercontent);
@@ -350,11 +357,11 @@ if (edit==='edit'){
               )
               .append(
                 $("<h3/>")
-                .text(jobtileinstance.name)
+                .text(renderdata.name)
               )
               .append(
                 $("<h4/>")
-                .text("Type: " + jobtileinstance.datetype)
+                .text("Type: " + renderdata.datetype)
               )
               .append(
                 $("<h5/>")
@@ -364,9 +371,10 @@ if (edit==='edit'){
                 $("<h5/>")
                 .text("Created: " + parsedcreatedat)
               ))));
-        // .append(modalcontainer);
-        return widgetRepresentation;
+      // .append(modalcontainer);
+      return widgetRepresentation;
     }
+
     function createInnerWidgetModal(gridrendercontent) {
       var expandedWidgetView = document.createElement('div');
       var modalfooter = document.createElement('div');
@@ -476,73 +484,74 @@ if (edit==='edit'){
               )
             )
           ));
-        if (typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin === "admin") {
-          $(modalfooter)
-            .prepend(
-              $('<button/>')
-              .addClass("btn btn-danger")
-              .attr("type", "button")
-              .text("Delete")
-              .unbind('click')
-              .on('click', function (e) {
-                e.stopPropagation();
-                var action = confirm('Are you sure you wish to delete this item ? It cannot be undone!');
-                if (action === false) {
-                  return false;
-                }
-                var updatedlistcontent = JSON.parse(gridrendercontent.content);
-                updateIndexlistForEditDelete(updatedlistcontent);
-                /// update indexlist
-                $.ajax({
-                    url: gridrendercontent.indexurl + '/' + gridrendercontent.indexfilename,
-                    beforeSend: function (xhr) {
-                      xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
-                    },
-                    type: 'PUT',
-                    data: '{"message": "create indexlist","sha":"' + gridrendercontent.listsha + '","content":"' + btoa(JSON.stringify(updatedlistcontent)) + '" }',
-                    dataType: 'json',
-                  })
-                  .done(function () {
-                    deleteWidgetContentFile(gridrendercontent);
-                    $(expandedWidgetView).modal('hide');
-                    $(expandedWidgetView).remove();
-                  });
-              })
-            )
-            .prepend(
-              $('<button/>')
-              .addClass("btn btn-info")
-              .attr("type", "button")
-              .attr("data-toggle", "modal")
-              .attr("data-backdrop", "false")
-              .text("Edit")
-              .unbind('click')
-              .on('click', function (e) {
-                e.stopPropagation();
-                $(expandedWidgetView).modal('hide');
-                $(expandedWidgetView).remove();
-                $(makeCreateForm("edit",gridrendercontent)).modal('show');
+      if (typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin === "admin") {
+        $(modalfooter)
+          .prepend(
+            $('<button/>')
+            .addClass("btn btn-danger")
+            .attr("type", "button")
+            .text("Delete")
+            .unbind('click')
+            .on('click', function (e) {
+              e.stopPropagation();
+              var action = confirm('Are you sure you wish to delete this item ? It cannot be undone!');
+              if (action === false) {
+                return false;
+              }
+              var updatedlistcontent = JSON.parse(gridrendercontent.content);
+              updateIndexlistForEditDelete(updatedlistcontent);
+              /// update indexlist
+              $.ajax({
+                  url: gridrendercontent.indexurl + '/' + gridrendercontent.indexfilename,
+                  beforeSend: function (xhr) {
+                    xhr.setRequestHeader("Authorization", "Basic " + btoa((gridrendercontent.user) + ":" + (gridrendercontent.pass)));
+                  },
+                  type: 'PUT',
+                  data: '{"message": "create indexlist","sha":"' + gridrendercontent.listsha + '","content":"' + btoa(JSON.stringify(updatedlistcontent)) + '" }',
+                  dataType: 'json',
+                })
+                .done(function () {
+                  deleteWidgetContentFile(gridrendercontent);
+                  $(expandedWidgetView).modal('hide');
+                  $(expandedWidgetView).remove();
+                });
+            })
+          )
+          .prepend(
+            $('<button/>')
+            .addClass("btn btn-info")
+            .attr("type", "button")
+            .attr("data-toggle", "modal")
+            .attr("data-backdrop", "false")
+            .text("Edit")
+            .unbind('click')
+            .on('click', function (e) {
+              e.stopPropagation();
+              $(expandedWidgetView).modal('hide');
+              $(expandedWidgetView).remove();
+              $(makeCreateForm("edit", gridrendercontent)).modal('show');
 
 
-              })
-            );
-        }
+            })
+          );
+      }
       return expandedWidgetView;
     }
+
     function addNewButtonHandler(gridrendercontent) {
       var widgetAddButton = document.createElement('button');
       var newbuttoncontainer = document.createElement('div');
 
       $(widgetAddButton)
-      .appendTo($(newbuttoncontainer))
+        .appendTo($(newbuttoncontainer))
         .addClass("btn btn-info")
         .text('NEW')
         .unbind('click')
         .on('click', function (e) {
           e.stopPropagation();
-          $(makeCreateForm("create",gridrendercontent)).modal('show');
+          $(makeCreateForm("create", gridrendercontent)).modal('show');
         });
-        return newbuttoncontainer;
+      return newbuttoncontainer;
     }
 
     function showInnerWidgetModal(id, gridrendercontent) {
@@ -560,8 +569,15 @@ if (edit==='edit'){
           unencodedcontent = JSON.parse(atob(response.content));
           $(createInnerWidgetModal(gridrendercontent)).modal('show');
         })
-        .fail(function () {
+        .fail(function (request) {
+          if (request.getResponseHeader('X-RateLimit-Remaining') == 0) {
+            var resetmilis = request.getResponseHeader('X-RateLimit-Reset');
+            var resetdate = new Date(resetmilis * 1000);
+            alert("You have exceeded your limit of api calls, your limit will be refreshed: " + resetdate + "Login with your GitHub credentials if you do not want to wait");
+          }
+          else{
           alert('That entry is no longer avaliable');
+          }
         });
     }
     OliveUI.modules.new_brokerage_object_grid_widget_js_modules.push(returned);

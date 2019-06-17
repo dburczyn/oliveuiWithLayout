@@ -39,6 +39,12 @@ if (typeof gridrendercontent.admin !=='undefined' && gridrendercontent.admin !==
                 gridrendercontent.admin = "user";
               }
 
+              else if (jqXHR.getResponseHeader('X-RateLimit-Remaining') == 0) {
+                var resetmilis = jqXHR.getResponseHeader('X-RateLimit-Reset');
+                var resetdate = new Date(resetmilis * 1000);
+                alert("You have exceeded your limit of api calls, your limit will be refreshed: " + resetdate + "Login with your GitHub credentials if you do not want to wait");
+              }
+
               else {
                 alert("unknown error occured");
               }
@@ -66,14 +72,20 @@ if (typeof gridrendercontent.admin !=='undefined' && gridrendercontent.admin !==
               })
               .fail(function (jqXHR, textStatus, errorThrown) {
                 if (jqXHR.status == '404') {
-                  alert("didnt find existing indexlist, creating new if proper authorization token provided...");
+                  alert("didnt find existing indexlist, creating new if proper authorization provided...");
                   resultsJSON = [];
                   var response = {};
                   response.content = btoa('{"list":[],"ignoredlist":[]}');
                   produceWidgetContent.call(null, response);
+                  cleanupIndexlist(gridrendercontent);
+                }
+                if (jqXHR.getResponseHeader('X-RateLimit-Remaining') == 0) {
+                  var resetmilis = jqXHR.getResponseHeader('X-RateLimit-Reset');
+                  var resetdate = new Date(resetmilis * 1000);
+                  alert("You have exceeded your limit of api calls, your limit will be refreshed: " + resetdate + "Login with your GitHub credentials if you do not want to wait");
                 }
                 if (jqXHR.status == '401') {
-                  alert("invalid authorization token - provide valid token for admin mode or no token for guestuser mode");
+                  alert("invalid authorization  - provide valid authorization for admin mode or no authorization for guestuser mode");
                 }
               });
             widgetlist = [];
@@ -93,11 +105,6 @@ if (typeof gridrendercontent.admin !=='undefined' && gridrendercontent.admin !==
           }
         }
       };
-      function setAuthHeader(request) {
-        if ((typeof this.token !== 'undefined') && (this.token != "") && (this.token != "defaulttoken")) {
-          request.setRequestHeader("Authorization", "token " + this.token);
-        }
-      }
       function instantiateWidgets(gridrendercontent) {
         for (var j = 0, lent = widgetlist.length; j < lent; j++) {
           if (widgetlist[j].type === gridrendercontent.type) {
@@ -204,6 +211,12 @@ if (typeof gridrendercontent.admin !=='undefined' && gridrendercontent.admin !==
               if (jqXHR.status == '401') {
                 alert("invalid authorization");
               }
+              if (jqXHR.getResponseHeader('X-RateLimit-Remaining') == 0) {
+                var resetmilis = jqXHR.getResponseHeader('X-RateLimit-Reset');
+                var resetdate = new Date(resetmilis * 1000);
+                alert("You have exceeded your limit of api calls, your limit will be refreshed: " + resetdate + "Login with your GitHub credentials if you do not want to wait");
+              }
+
             });
         }
         function getDiffIndexList(gridinstance) {
