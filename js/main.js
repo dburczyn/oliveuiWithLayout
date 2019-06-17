@@ -7,7 +7,7 @@
   /////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////
-  var configrepourl = "https://api.github.com/repos/bocbrokeragetest/brokerage";
+  var configrepourl = "https://api.github.com/repositories/175385549";
   /////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////
@@ -65,7 +65,7 @@
     })
   );
   $(function () {
-    $(".glyphicon-wrench").hide();
+    $(".lm_header").hide();
     $(newWidgetInstance).hide();
     $(uploadbutton).hide();
     $(downloadbutton).hide();
@@ -76,7 +76,7 @@
     }).done(function (response) {
       listsha = response.sha;
       oliveUI.setContent(JSON.parse(atob(response.content)));
-      $(".glyphicon-wrench").hide();
+      $(".lm_header").hide();
     }).fail(function (jqXHR, textStatus, errorThrown) {
       if (jqXHR.status == '404') {
         alert("cannot find config online");
@@ -197,7 +197,7 @@
             });
             oliveUI.setContent(config);
             if (isadmin === "admin") {
-              $(".glyphicon-wrench").show();
+              $(".lm_header").show();
               $(newWidgetInstance).show();
               $(uploadbutton).show();
               $(downloadbutton).show();
@@ -205,7 +205,7 @@
             }
           }).fail(function () {
             if (isadmin === "admin") {
-              $(".glyphicon-wrench").show();
+              $(".lm_header").show();
               $(newWidgetInstance).show();
               $(uploadbutton).show();
               $(downloadbutton).show();
@@ -231,7 +231,7 @@
                   }
                 });
                 oliveUI.setContent(config);
-                $(".glyphicon-wrench").hide();
+                $(".lm_header").hide();
                 $(newWidgetInstance).hide();
                 $(uploadbutton).hide();
                 $(downloadbutton).hide();
@@ -260,7 +260,7 @@
                   }
                 });
                 oliveUI.setContent(config);
-                $(".glyphicon-wrench").hide();
+                $(".lm_header").hide();
                 $(newWidgetInstance).hide();
                 $(uploadbutton).hide();
                 $(downloadbutton).hide();
