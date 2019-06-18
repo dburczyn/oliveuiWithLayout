@@ -28,7 +28,15 @@
     .text("Download Grid config")
     .addClass("btn btn-warning")
     .click(function () {
-      OliveUI.utils.download(JSON.stringify(oliveUI.getContent()), 'oliveui_backup_' + new Date().toISOString() + '.json', 'application/json');
+      configdown = oliveUI.getContent();
+      $.each(configdown.widgetInstances, function (i, valdown) {
+        if (valdown.manifestName === 'Grid Widget') {
+          valdown.widgetContent.user = '';
+          valdown.widgetContent.pass = '';
+          valdown.widgetContent.admin = '';
+        }
+      });
+      OliveUI.utils.download(JSON.stringify(configdown), 'oliveui_backup_' + new Date().toISOString() + '.json', 'application/json');
     }),
     $(uploadbutton)
     .text("Upload Grid config")
