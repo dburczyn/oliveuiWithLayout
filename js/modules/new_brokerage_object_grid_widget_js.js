@@ -1,7 +1,5 @@
   (function ($, OliveUI) {
     OliveUI.modules.new_brokerage_object_grid_widget_js = function (config = {}) {
-      config.height = config.minHeight || 100;
-      'use strict';
       var widgetFileNames = [];
       var indexedListNames = [];
       var indexListobjToUpdate = {};

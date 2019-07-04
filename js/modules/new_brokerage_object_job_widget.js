@@ -1,7 +1,5 @@
 (function ($, OliveUI) {
   OliveUI.modules.new_brokerage_object_job_widget = function (config = {}) {
-    config.height = config.minHeight || 100;
-    'use strict';
     var jobStatics = {
       bgcolor: "#c9cadc",
       icon: "fas fa-briefcase fa-3x",
@@ -371,7 +369,6 @@
                 $("<h5/>")
                 .text("Created: " + parsedcreatedat)
               ))));
-      // .append(modalcontainer);
       return widgetRepresentation;
     }
 

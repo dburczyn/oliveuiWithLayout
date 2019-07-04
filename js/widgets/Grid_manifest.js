@@ -29,4 +29,4 @@
       return new_brokerage_object_grid_config_js({});
     },
   });
-}(jQuery, OliveUI, OliveUI.modules.new_brokerage_object_grid_widget, OliveUI.modules.new_brokerage_object_grid_config_js));
+}(jQuery, OliveUI, OliveUI.modules.new_brokerage_object_grid_widget_js, OliveUI.modules.new_brokerage_object_grid_config_js));

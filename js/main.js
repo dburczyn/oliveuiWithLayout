@@ -22,6 +22,7 @@
   var optionsModal = document.createElement('div');
   var loginButton = document.createElement('button');
   var newWidgetInstance = document.createElement('button');
+  var newMultirepoWidgetInstance = document.createElement('button');
   var isadmin;
   $('#main').prepend(
     $(downloadbutton)
@@ -176,6 +177,13 @@
       .click(function () {
         oliveUI.createWidgetInstance('Grid Widget');
       });
+      $(newMultirepoWidgetInstance)
+      .prependTo($("#main"))
+      .addClass("btn btn-warning")
+      .text("New Multirepo Widget")
+      .click(function () {
+        oliveUI.createWidgetInstance('Multirepo Grid Widget');
+      });
     $(configform).on('submit', function (e) {
       e.preventDefault();
       $.ajax({
@@ -227,7 +235,7 @@
             $.ajax({
                 url: configrepourl + "/contents/gridconfig.json",
                 beforeSend: function (xhr) {
-                  xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
+                  // xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
                 },
                 dataType: 'json'
               }).done(function (response) {
