@@ -14,99 +14,125 @@
     var url = document.createElement('input');
     var type = document.createElement('select');
     var configform = document.createElement('form');
-    var wrapper = document.createElement('div');
-
-    $('#example').isiaFormRepeater();
-
-    $('#example').isiaFormRepeater({
-        addButton: 'Add Button Here',
-        removeButton: 'Remove Button Here'
-      });
-
-
-
+    var formelswrapper = document.createElement('div');
     return {
       getContent: function () {
-        var formlength = 2;
-        config.gridrenderconfig=[];
-        for (var j = 0; j < formlength; j++) {
-          config.gridrenderconfig.push({
-            indexurl : $(url).val(),
-            indexfilename : $(indexfilename).val(),
-            type : $(type).val(),
-            user : $(user).val(),
-            pass : $(pass).val(),
-            isadmin : isadmin
-          });
-        }
+        var titles = $('[class^=repeat-el]').map(function (idx, elem) {
+          return {
+            [$(elem).attr('name').replace(/[^0-9.]/g, "")]: {
+              [$(elem).attr('name').replace(/[[]\d+[\]]/g, "")]: $(elem).val()
+            }
+          };
+        }).get();
+        var resultjsonarray = [];
+        titles.forEach(function (json) {
+          resultjsonarray[Object.keys(json)[0] - 1] = $.extend(resultjsonarray[Object.keys(json)[0] - 1],
+            (Object.values(json)[0]));
+        });
+        config.gridrenderconfig = resultjsonarray.filter(function (el) {
+          return el != null && el != "";
+        });
+        config.gridrenderconfig.isadmin = isadmin;
+
         return config;
       },
       setContent: function (content = {}) {
-        var formlength =0;
-        if (typeof content.gridrenderconfig!=='undefined' ){
-          formlength = content.gridrenderconfig.length;
+        if (typeof content.gridrenderconfig !== 'undefined') {
+          for (var i = 1; i <= content.gridrenderconfig.length - 1; i++) {
+            if ($(".repeat-item").length < content.gridrenderconfig.length) {
+              $(".repeat-add").click();
+            }
+          }
+          for (var i = 1; i <= content.gridrenderconfig.length; i++) {
+            $.each(content.gridrenderconfig[i - 1], function (key, val) {
+              $('[name="' + key + '[' + i + ']"').val(function (index, value) {
+                return value = val;
+              });
+            });
+          }
         }
-        for (var j = 0; j < formlength; j++) {
-        $(url).val(content.gridrenderconfig[j].indexurl);
-        $(indexfilename).val(content.gridrenderconfig[j].indexfilename);
-        $(type).val(content.gridrenderconfig[j].type);
-        $(user).val(content.gridrenderconfig[j].user);
-        $(pass).val(content.gridrenderconfig[j].pass);
-        isadmin = content.gridrenderconfig[j].isadmin;
-        }
+        isadmin = content.gridrenderconfig.isadmin;
+
       },
       render: function () {
         var returnedconfigform =
-
           $(configform)
           .addClass("form-style-5")
           .append(
-            $('<p/>')
-            .text("List Endpoint Url:")
-          )
-          .append(
-            $(url)
-            .attr("type", "text")
-          )
-          .append(
-            $('<p/>')
-            .text("Username:")
-          )
-          .append(
-            $(user)
-            .attr("type", "text")
-          )
-          .append(
-            $('<p/>')
-            .text("Password:")
-          )
-          .append(
-            $(pass)
-            .attr("type", "password")
-          )
-          .append(
-            $('<p/>')
-            .text("List filename:")
-          )
-          .append(
-            $(indexfilename)
-            .attr("type", "text")
-          ).append(
-            $('<p/>')
-            .text("Widget type:")
-          );
+            $('<div/>')
+            .addClass("isiaFormRepeater repeat-section")
+            .attr("id", "multirepogridconfigform")
+            .attr("data-field-id", "multirepogridconfigformfield")
+            .attr("data-items-index-array", "[1]")
+            .append(
+              $('<div/>')
+              .addClass("repeat-items")
+              .append(
+                $(formelswrapper)
+                .addClass("repeat-item")
+                .attr("data-field-index", "1")
+                .append(
+                  $('<p/>')
+                  .text("List Endpoint Url:")
+                )
+                .append(
+                  $(url)
+                  .addClass("repeat-el")
+                  .attr("type", "text")
+                  .attr("name", "indexurl[1]")
+                )
+                .append(
+                  $('<p/>')
+                  .text("Username:")
+                )
+                .append(
+                  $(user)
+                  .addClass("repeat-el")
+                  .attr("type", "text")
+                  .attr("name", "user[1]")
+                )
+                .append(
+                  $('<p/>')
+                  .text("Password:")
+                )
+                .append(
+                  $(pass)
+                  .addClass("repeat-el")
+                  .attr("type", "password")
+                  .attr("name", "pass[1]")
+                )
+                .append(
+                  $('<p/>')
+                  .text("List filename:")
+                )
+                .append(
+                  $(indexfilename)
+                  .addClass("repeat-el")
+                  .attr("type", "text")
+                  .attr("name", "indexfilename[1]")
+                ).append(
+                  $('<p/>')
+                  .text("Widget type:")
+                ))));
         OliveUI.modules.new_brokerage_object_grid_widget_js_modules.forEach(widget => {
-          returnedconfigform
+          $(formelswrapper)
             .append(
               $(type)
+              .addClass("repeat-el")
+              .attr("name", "type[1]")
               .append(
                 $("<option>")
                 .attr("value", widget.type)
                 .text(widget.type)
               ));
         });
-
-
+        $(configform).wrapInner('<fieldset />');
+        $(document).ready(function () {
+          $('#multirepogridconfigform').isiaFormRepeater({
+            addButton: '<div class="repeat-add-wrapper"><a data-repeat-add-btn class="repeat-add pure-button pure-button-primary" href="#">Add</a></div>',
+            removeButton: '<a data-repeat-remove-btn class="repeat-remove pure-button pure-button-primary" href="#">Remove</a>'
+          });
+        });
         return returnedconfigform;
       },
     };
