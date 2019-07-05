@@ -279,7 +279,10 @@
           $("<div/>")
           .addClass("cms-boxes-items cms-features")
           .css({
-            "background-color": trainingStatics.bgcolor
+            "background-color": "#ffffff",
+            "border-style": "solid",
+            "border-width": "2px",
+            "border-color": trainingStatics.bgcolor
           })
           .append(
             $("<div/>")

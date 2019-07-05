@@ -10,10 +10,12 @@
         };
         return {
           render: function () {
-            return _dom.rootDiv;
+                        return _dom.rootDiv;
           },
           setContent: function (content = {}) {
             content = content || '';
+            content.gridrenderconfig = content.gridrenderconfig || [];
+
             _dom.rootDiv.empty();
             try {
               _dom.rootDiv.append(OliveUI.modules.new_brokerage_object_multirepo_grid_widget_js().render(content));
@@ -27,6 +29,12 @@
     },
     createConfigurationUIFn: function () {
       return new_brokerage_object_multirepo_grid_config_js({});
+    },
+    configurationMappingFn: function (widget,inputthatwasrecieved,inputtobepassed) {
+      Object.assign(inputtobepassed, inputthatwasrecieved);
+      if (typeof inputtobepassed.gridrenderconfig!='undefined'){
+        widget.setWidgetTitle(inputtobepassed.gridrenderconfig[0].type);
+      }
     },
   });
 }(jQuery, OliveUI, OliveUI.modules.new_brokerage_object_multirepo_grid_widget_js, OliveUI.modules.new_brokerage_object_multirepo_grid_config_js));

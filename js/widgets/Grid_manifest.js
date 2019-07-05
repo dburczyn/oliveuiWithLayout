@@ -14,6 +14,7 @@
           },
           setContent: function (content = {}) {
             content = content || '';
+            content.gridrengerconfig = content.gridrengerconfig || '';
             _dom.rootDiv.empty();
             try {
               _dom.rootDiv.append(OliveUI.modules.new_brokerage_object_grid_widget_js().render(content));

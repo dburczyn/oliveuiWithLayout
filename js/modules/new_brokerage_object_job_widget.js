@@ -336,7 +336,10 @@
           $("<div/>")
           .addClass("cms-boxes-items cms-features")
           .css({
-            "background-color": jobStatics.bgcolor
+            "background-color": "#ffffff",
+            "border-style": "solid",
+            "border-width": "2px",
+            "border-color": jobStatics.bgcolor
           })
           .append(
             $("<div/>")

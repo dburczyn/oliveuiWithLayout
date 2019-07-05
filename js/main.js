@@ -27,7 +27,7 @@
   $('#main').prepend(
     $(downloadbutton)
     .text("Download Grid config")
-    .addClass("btn btn-warning")
+    .addClass("button-warning pure-button")
     .click(function () {
       configdown = oliveUI.getContent();
       $.each(configdown.widgetInstances, function (i, valdown) {
@@ -41,13 +41,13 @@
     }),
     $(uploadbutton)
     .text("Upload Grid config")
-    .addClass("btn btn-warning")
+    .addClass("button-warning pure-button")
     .click(function () {
       $('#fileUpload').trigger('click');
     }),
     $(cloudsavebutton)
     .text("Upload Grid config to cloud")
-    .addClass("btn btn-warning")
+    .addClass("button-warning pure-button")
     .click(function () {
       configtoup = oliveUI.getContent();
       $.each(configtoup.widgetInstances, function (i, valup) {
@@ -74,8 +74,9 @@
     })
   );
   $(function () {
-    $(".lm_header").hide();
+    $(".glyphicon-wrench").hide();
     $(newWidgetInstance).hide();
+    $(newMultirepoWidgetInstance).hide();
     $(uploadbutton).hide();
     $(downloadbutton).hide();
     $(cloudsavebutton).hide();
@@ -85,7 +86,7 @@
     }).done(function (response) {
       listsha = response.sha;
       oliveUI.setContent(JSON.parse(atob(response.content)));
-      $(".lm_header").hide();
+      $(".glyphicon-wrench").hide();
     }).fail(function (jqXHR, textStatus, errorThrown) {
       if (jqXHR.status == '404') {
         alert("cannot find config online");
@@ -172,14 +173,14 @@
       });
     $(newWidgetInstance)
       .prependTo($("#main"))
-      .addClass("btn btn-warning")
+      .addClass("button-warning pure-button")
       .text("New Widget")
       .click(function () {
         oliveUI.createWidgetInstance('Grid Widget');
       });
       $(newMultirepoWidgetInstance)
       .prependTo($("#main"))
-      .addClass("btn btn-warning")
+      .addClass("button-warning pure-button")
       .text("New Multirepo Widget")
       .click(function () {
         oliveUI.createWidgetInstance('Multirepo Grid Widget');
@@ -210,19 +211,25 @@
                 val.widgetContent.pass = $(pass).val();
                 val.widgetContent.admin = isadmin;
               }
+              else if (val.manifestName === 'Multirepo Grid Widget') {
+                val.widgetContent.user = $(user).val();
+                val.widgetContent.pass = $(pass).val();
+              }
             });
             oliveUI.setContent(config);
             if (isadmin === "admin") {
-              $(".lm_header").show();
+              $(".glyphicon-wrench").show();
               $(newWidgetInstance).show();
+              $(newMultirepoWidgetInstance).show();
               $(uploadbutton).show();
               $(downloadbutton).show();
               $(cloudsavebutton).show();
             }
           }).fail(function () {
             if (isadmin === "admin") {
-              $(".lm_header").show();
+              $(".glyphicon-wrench").show();
               $(newWidgetInstance).show();
+              $(newMultirepoWidgetInstance).show();
               $(uploadbutton).show();
               $(downloadbutton).show();
               $(cloudsavebutton).show();
@@ -247,8 +254,9 @@
                   }
                 });
                 oliveUI.setContent(config);
-                $(".lm_header").hide();
+                $(".glyphicon-wrench").hide();
                 $(newWidgetInstance).hide();
+                $(newMultirepoWidgetInstance).hide();
                 $(uploadbutton).hide();
                 $(downloadbutton).hide();
                 $(cloudsavebutton).hide();
@@ -269,15 +277,20 @@
                 listsha = response.sha;
                 var config = JSON.parse(atob(response.content));
                 $.each(config.widgetInstances, function (i, val) {
-                  if (val.manifestName === 'Grid Widget'); {
+                  if (val.manifestName === 'Grid Widget') {
                     val.widgetContent.user = $(user).val();
                     val.widgetContent.pass = $(pass).val();
                     val.widgetContent.admin = "user";
                   }
+                  else if (val.manifestName === 'Multirepo Grid Widget') {
+                    val.widgetContent.user = $(user).val();
+                    val.widgetContent.pass = $(pass).val();
+                  }
                 });
                 oliveUI.setContent(config);
-                $(".lm_header").hide();
+                $(".glyphicon-wrench").hide();
                 $(newWidgetInstance).hide();
+                $(newMultirepoWidgetInstance).hide();
                 $(uploadbutton).hide();
                 $(downloadbutton).hide();
                 $(cloudsavebutton).hide();

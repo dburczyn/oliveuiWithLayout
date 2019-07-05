@@ -1,6 +1,7 @@
 (function ($, OliveUI, CodeMirror) {
   OliveUI.modules.new_brokerage_object_multirepo_grid_config_js = function (config = {}) {
     config.height = config.minHeight || 100;
+    config.gridrenderconfig = [];
     config.codemirror = config.codemirror || {
       mode: 'htmlmixed',
       tabSize: 2,
@@ -32,8 +33,8 @@
         config.gridrenderconfig = resultjsonarray.filter(function (el) {
           return el != null && el != "";
         });
-        config.gridrenderconfig.isadmin = isadmin;
-
+        config.user = config.gridrenderconfig[0].user;
+        config.pass = config.gridrenderconfig[0].pass;
         return config;
       },
       setContent: function (content = {}) {
@@ -44,6 +45,8 @@
             }
           }
           for (var i = 1; i <= content.gridrenderconfig.length; i++) {
+            content.gridrenderconfig[i - 1].user = content.user;
+            content.gridrenderconfig[i - 1].pass = content.pass;
             $.each(content.gridrenderconfig[i - 1], function (key, val) {
               $('[name="' + key + '[' + i + ']"').val(function (index, value) {
                 return value = val;
@@ -51,8 +54,6 @@
             });
           }
         }
-        isadmin = content.gridrenderconfig.isadmin;
-
       },
       render: function () {
         var returnedconfigform =

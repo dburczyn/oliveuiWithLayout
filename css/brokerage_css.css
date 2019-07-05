@@ -1,13 +1,13 @@
 section.cms-boxes .cms-boxes-outer {
   text-align: left;
-  margin-bottom: 6px;
+  margin-bottom: 30px;
   padding: 0 3px;
 }
 
 section.cms-boxes .cms-boxes-outer .cms-boxes-items {
   height: 200px;
   display: table;
-  width: 100%;
+  width: 90%;
 }
 
 section.cms-boxes .cms-boxes-outer .cms-boxes-items p {
@@ -72,6 +72,7 @@ section.cms-boxes .cms-boxes-items:hover {
   opacity: .2;
   cursor: pointer;
 }
+
 
 .modal-body {
   max-height: calc(100vh - 195px);
@@ -317,68 +318,6 @@ img {
   color: white;
 }
 
-
-
-
-
-.cms-boxes::-webkit-scrollbar {
-  width: 1em;
-}
-
-.cms-boxes::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-}
-
-.cms-boxes::-webkit-scrollbar-thumb {
-  background-color: darkgrey;
-  outline: 1px solid slategrey;
-}
-
-
-
-div::-webkit-scrollbar {
-  width: 0.7em;
-  height: 0.7em;
-  background-color: #F5F5F5;
-}
-
-div::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #F5F5F5;
-  border-radius: 10px;
-}
-
-div::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background-image: -webkit-gradient(linear,
-      left bottom,
-      left top,
-      color-stop(0.44, rgb(137, 168, 230)),
-      color-stop(0.72, rgb(95, 148, 212)),
-      color-stop(0.86, rgb(77, 112, 214)));
-}
-
-body::-webkit-scrollbar {
-  width: 0.7em;
-  height: 0.7em;
-  background-color: #F5F5F5;
-}
-
-body::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #F5F5F5;
-  border-radius: 10px;
-}
-
-body::-webkit-scrollbar-thumb {
-  border-radius: 10px;
-  background-image: -webkit-gradient(linear,
-      left bottom,
-      left top,
-      color-stop(0.44, rgb(137, 168, 230)),
-      color-stop(0.72, rgb(95, 148, 212)),
-      color-stop(0.86, rgb(77, 112, 214)));
-}
 
 ul {
   list-style-type: none;
