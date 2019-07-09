@@ -8,6 +8,7 @@
   /////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////
   var configrepourl = "https://api.github.com/repositories/175385549";
+  var configrepofilelocationfolder = "/contents/newconfigholder/gridconfig.json";
   /////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////////////////
@@ -42,6 +43,7 @@
           $.each(valdown.widgetContent.gridrenderconfig, function (i, valdowngrid) {
             valdowngrid.user = '';
             valdowngrid.pass = '';
+            valdowngrid.admin = '';
           });
         }
       });
@@ -70,11 +72,12 @@
           $.each(valup.widgetContent.gridrenderconfig, function (i, valupgrid) {
             valupgrid.user = '';
             valupgrid.pass = '';
+            valupgrid.admin = '';
           });
         }
       });
       $.ajax({
-        url: configrepourl + "/contents/gridconfig.json",
+        url: configrepourl + configrepofilelocationfolder,
         beforeSend: function (xhr) {
           xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
         },
@@ -97,7 +100,7 @@
     $(downloadbutton).hide();
     $(cloudsavebutton).hide();
     $.ajax({
-      url: configrepourl + "/contents/gridconfig.json",
+      url: configrepourl + configrepofilelocationfolder,
       dataType: 'json'
     }).done(function (response) {
       listsha = response.sha;
@@ -214,7 +217,7 @@
         .done(function (response) {
           isadmin = response.permission;
           $.ajax({
-            url: configrepourl + "/contents/gridconfig.json",
+            url: configrepourl + configrepofilelocationfolder,
             beforeSend: function (xhr) {
               xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
             },
@@ -257,7 +260,7 @@
           if (jqXHR.status == '401') {
             alert("invalid credentials entering unauthenticated mode");
             $.ajax({
-                url: configrepourl + "/contents/gridconfig.json",
+                url: configrepourl + configrepofilelocationfolder,
                 beforeSend: function (xhr) {
                   // xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
                 },
@@ -288,7 +291,7 @@
             alert("bad config repo url contact your administrator");
           } else if (jqXHR.status == '403') {
             $.ajax({
-                url: configrepourl + "/contents/gridconfig.json",
+                url: configrepourl + configrepofilelocationfolder,
                 beforeSend: function (xhr) {
                   xhr.setRequestHeader("Authorization", "Basic " + btoa($(user).val() + ":" + $(pass).val()));
                 },

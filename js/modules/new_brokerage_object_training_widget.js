@@ -146,7 +146,7 @@
                 )
                 .append(
                   $('<p/>')
-                  .text("Event Date:")
+                  .text("Training Date:")
                 )
                 .append(
                   $(datefield)

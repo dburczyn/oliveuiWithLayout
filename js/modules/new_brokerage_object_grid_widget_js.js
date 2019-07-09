@@ -19,7 +19,7 @@
       var grid = {
         type: "Grid",
         render: function (gridrendercontent) {
-          if (typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin !== 'bad' && gridrendercontent.admin !== '' && typeof gridrendercontent.indexurl !== 'undefined' && gridrendercontent.indexurl !== '') // check if authorized !!!!!!!!
+          if (typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin !== 'bad' && typeof gridrendercontent.indexurl !== 'undefined' && gridrendercontent.indexurl !== ''  && typeof gridrendercontent.user !== 'undefined' && gridrendercontent.user !== '') // check if authorized !!!!!!!!
           {
             var getAdminAjax = $.ajax({
                 url: gridrendercontent.indexurl.split('contents')[0] + "collaborators/" + gridrendercontent.user + "/permission",
@@ -106,6 +106,8 @@
               }
             };
           }
+
+
           if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin === "admin")) {
             var newbuttoninstance = Object.assign({}, widgetlist[j]);
             if (typeof newbuttoninstance.makeCreateButton === "function" && typeof gridrendercontent.admin !== 'undefined' && gridrendercontent.admin !== '' && widgetlist[j].type === gridrendercontent.type) {
@@ -156,6 +158,7 @@
         });
       }
       function cleanupIndexlist(gridrendercontent) {
+
         if ((typeof gridrendercontent.admin !== 'undefined') && (gridrendercontent.admin != "")) {
           getListOfObjects(gridrendercontent); // used fo r creation/update of indexlist - only for admin = authenticated users
         }
@@ -287,6 +290,8 @@
               type: 'PUT',
               data: '{"message": "create indexlist","sha":"' + listsha + '","content":"' + btoa(JSON.stringify(updatedIndexList)) + '" }',
               dataType: 'json',
+            }).done(function () {
+              $('.glyphicon-refresh').trigger('click');
             });
           }
         }

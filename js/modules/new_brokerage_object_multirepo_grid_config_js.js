@@ -45,11 +45,13 @@
       },
       setContent: function (content = {}) {
         if (typeof content.gridrenderconfig !== 'undefined') {
+          $(function() {
           for (var i = 1; i <= content.gridrenderconfig.length - 1; i++) {
             if ($(".repeat-item").length < content.gridrenderconfig.length) {
-              $(".repeat-add").click();
+                $(".repeat-add").click();
             }
           }
+
           for (var i = 1; i <= content.gridrenderconfig.length; i++) {
             content.gridrenderconfig[i - 1].user = content.user;
             content.gridrenderconfig[i - 1].pass = content.pass;
@@ -62,6 +64,7 @@
           }
           $(name).val(content.name);
           $(color).val(content.color);
+        });
         }
       },
       render: function () {

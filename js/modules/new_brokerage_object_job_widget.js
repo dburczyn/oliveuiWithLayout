@@ -256,7 +256,7 @@
           data: '{"message": "delete file","sha":"' + currentresponse.sha + '" }',
         })
         .done(function () {
-          $('.glyphicon-refresh').trigger('click');
+          $('.glyphicon-refresh').delay(2000).trigger('click');
         });
     }
 

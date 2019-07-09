@@ -31,7 +31,7 @@
     },
     configurationMappingFn: function (widget, inputthatwasrecieved, inputtobepassed) {
       Object.assign(inputtobepassed, inputthatwasrecieved);
-      if (typeof inputtobepassed.gridrenderconfig != 'undefined') {
+      if (typeof inputtobepassed!='undefined' && typeof inputtobepassed.name!='undefined' ){
         widget.setWidgetTitle(inputtobepassed.name);
       }
     },

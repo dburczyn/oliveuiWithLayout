@@ -20,8 +20,6 @@
             let gridrendercontent = config.gridrenderconfig[jj];
             gridrendercontent.color = config.color;
             if (typeof gridrendercontent.indexurl !== 'undefined' && typeof gridrendercontent.indexfilename !== 'undefined' && gridrendercontent.indexurl !== '' && gridrendercontent.indexfilename !== '') {
-              console.log("ajax");
-              console.log(gridrendercontent);
               var getDataAjax = $.ajax({
                   url: gridrendercontent.indexurl + "/" + gridrendercontent.indexfilename,
                   beforeSend: function (xhr) {

@@ -16,6 +16,7 @@
     var name = document.createElement('input');
     var color = document.createElement('input');
     var configform = document.createElement('form');
+    var isadmin='';
 
 
     return {
@@ -27,7 +28,7 @@
         config.pass = $(pass).val();
         config.name = $(name).val();
         config.color = $(color).val();
-        config.isadmin = isadmin;
+        config.admin = isadmin;
         return config;
       },
       setContent: function (content = {}) {
@@ -38,7 +39,8 @@
         $(pass).val(content.pass);
         $(name).val(content.name);
         $(color).val(content.color);
-        isadmin = content.isadmin;
+        if (typeof content.admin !=='undefined'){
+        isadmin = content.admin;}
       },
       render: function () {
         var returnedconfigform =
