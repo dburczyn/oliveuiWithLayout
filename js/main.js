@@ -35,6 +35,14 @@
           valdown.widgetContent.user = '';
           valdown.widgetContent.pass = '';
           valdown.widgetContent.admin = '';
+        } else if (valdown.manifestName === 'Multirepo Grid Widget') {
+          valdown.widgetContent.user = '';
+          valdown.widgetContent.pass = '';
+          valdown.widgetContent.admin = '';
+          $.each(valdown.widgetContent.gridrenderconfig, function (i, valdowngrid) {
+            valdowngrid.user = '';
+            valdowngrid.pass = '';
+          });
         }
       });
       OliveUI.utils.download(JSON.stringify(configdown), 'oliveui_backup_' + new Date().toISOString() + '.json', 'application/json');
@@ -51,10 +59,18 @@
     .click(function () {
       configtoup = oliveUI.getContent();
       $.each(configtoup.widgetInstances, function (i, valup) {
-        if (valup.manifestName === 'Grid Widget'); {
+        if (valup.manifestName === 'Grid Widget') {
           valup.widgetContent.user = '';
           valup.widgetContent.pass = '';
           valup.widgetContent.admin = '';
+        } else if (valup.manifestName === 'Multirepo Grid Widget') {
+          valup.widgetContent.user = '';
+          valup.widgetContent.pass = '';
+          valup.widgetContent.admin = '';
+          $.each(valup.widgetContent.gridrenderconfig, function (i, valupgrid) {
+            valupgrid.user = '';
+            valupgrid.pass = '';
+          });
         }
       });
       $.ajax({
@@ -93,6 +109,7 @@
       }
     });
   });
+
   function addGithubLoginForm(configrepourl) {
     $(optionsModal)
       .prependTo($(document.body))
@@ -178,7 +195,7 @@
       .click(function () {
         oliveUI.createWidgetInstance('Grid Widget');
       });
-      $(newMultirepoWidgetInstance)
+    $(newMultirepoWidgetInstance)
       .prependTo($("#main"))
       .addClass("button-warning pure-button")
       .text("New Multirepo Widget")
@@ -210,10 +227,10 @@
                 val.widgetContent.user = $(user).val();
                 val.widgetContent.pass = $(pass).val();
                 val.widgetContent.admin = isadmin;
-              }
-              else if (val.manifestName === 'Multirepo Grid Widget') {
+              } else if (val.manifestName === 'Multirepo Grid Widget') {
                 val.widgetContent.user = $(user).val();
                 val.widgetContent.pass = $(pass).val();
+                val.widgetContent.admin = isadmin;
               }
             });
             oliveUI.setContent(config);
@@ -249,7 +266,10 @@
                 listsha = response.sha;
                 var config = JSON.parse(atob(response.content));
                 $.each(config.widgetInstances, function (i, val) {
-                  if (val.manifestName === 'Grid Widget'); {
+                  if (val.manifestName === 'Grid Widget') {
+                    val.widgetContent.admin = '';
+                  }
+                  else if (val.manifestName === 'Multirepo Grid Widget') {
                     val.widgetContent.admin = '';
                   }
                 });
@@ -281,10 +301,10 @@
                     val.widgetContent.user = $(user).val();
                     val.widgetContent.pass = $(pass).val();
                     val.widgetContent.admin = "user";
-                  }
-                  else if (val.manifestName === 'Multirepo Grid Widget') {
+                  } else if (val.manifestName === 'Multirepo Grid Widget') {
                     val.widgetContent.user = $(user).val();
                     val.widgetContent.pass = $(pass).val();
+                    val.widgetContent.admin = "user";
                   }
                 });
                 oliveUI.setContent(config);

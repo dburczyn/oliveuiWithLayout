@@ -13,6 +13,8 @@
     var pass = document.createElement('input');
     var url = document.createElement('input');
     var type = document.createElement('select');
+    var name = document.createElement('input');
+    var color = document.createElement('input');
     var configform = document.createElement('form');
 
 
@@ -23,6 +25,8 @@
         config.type = $(type).val();
         config.user = $(user).val();
         config.pass = $(pass).val();
+        config.name = $(name).val();
+        config.color = $(color).val();
         config.isadmin = isadmin;
         return config;
       },
@@ -32,12 +36,33 @@
         $(type).val(content.type);
         $(user).val(content.user);
         $(pass).val(content.pass);
+        $(name).val(content.name);
+        $(color).val(content.color);
         isadmin = content.isadmin;
       },
       render: function () {
         var returnedconfigform =
           $(configform)
           .addClass("form-style-5")
+          .append(
+            $('<p/>')
+            .text("Widget name:")
+          )
+          .append(
+            $(name)
+            .attr("type", "text")
+          )
+          .append(
+            $('<p/>')
+            .text("Widget color:")
+          )
+          .append(
+            $(color)
+            .attr("type", "color")
+          )
+          .append(
+            $('<p/>')
+          )
           .append(
             $('<p/>')
             .text("List Endpoint Url:")

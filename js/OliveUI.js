@@ -39,7 +39,7 @@
         _sub.layoutManager.addDomElLayoutConfiguration(uuid);
       }
       _sub.layoutManager.setTitle(uuid, widgetName);
-      },
+    },
     deleteWidgetInstance: function (_state, uuid) {
       if (!_state.widgetInstances[uuid]) return;
       _state.widgetInstances[uuid].rootDiv.remove();

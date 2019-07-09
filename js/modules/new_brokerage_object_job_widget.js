@@ -16,11 +16,10 @@
     };
     var currentresponse;
     var unencodedcontent;
-
     var returned = {
       type: "JobTile",
       render: function (renderdata, gridrendercontent) {
-        return createFrontWidgetTile(renderdata,gridrendercontent);
+        return createFrontWidgetTile(renderdata, gridrendercontent);
       },
       makeCreateButton: function (gridrendercontent) {
         return addNewButtonHandler(gridrendercontent);
@@ -55,8 +54,6 @@
       var createdatfield = document.createElement('input');
       var updatedatfield = document.createElement('input');
       var filenamefield = document.createElement('input');
-
-
       $(createform)
         .addClass("modal")
         .attr("role", "dialog")
@@ -120,7 +117,6 @@
                   $(filenamefield)
                   .attr("type", "text")
                   .attr("name", "filenamefield")
-
                 )
                 .append(
                   $('<p/>')
@@ -231,9 +227,7 @@
               )
             )
           ));
-
       if (edit === 'edit') {
-
         var updatedat = new Date().getTime();
         $(updatedatfield).val(updatedat);
         $(createdatfield).val(unencodedcontent.createdat);
@@ -241,7 +235,6 @@
         $(filecontentfield).val(unencodedcontent.description);
         $(emailaddressfield).val(unencodedcontent.email);
         $(jobpicturefield).val(unencodedcontent.picture);
-
         $(document).ready(function () {
           $('input[name="jobtype"]').each(function () {
             if (unencodedcontent.datetype === $(this).val()) {
@@ -249,11 +242,8 @@
             }
           });
         });
-
-
       }
       return createform;
-
     }
 
     function deleteWidgetContentFile(gridrendercontent) {
@@ -271,7 +261,7 @@
     }
 
     function createWidgetContentFile(gridrendercontent, createform) {
-      var widgetInstanceContent =produceWidgetInstanceContent(createform);
+      var widgetInstanceContent = produceWidgetInstanceContent(createform);
       $.ajax({
           url: gridrendercontent.indexurl + '/' + widgetInstanceContent.updatedat,
           beforeSend: function (xhr) {
@@ -283,18 +273,19 @@
         .done(function () {
           $(createform).modal('hide');
           $(createform).remove();
-          updateIndexlist(gridrendercontent,widgetInstanceContent);
+          updateIndexlist(gridrendercontent, widgetInstanceContent);
         });
     }
 
-    function updateIndexlist(gridrendercontent,widgetInstanceContent) {
+    function updateIndexlist(gridrendercontent, widgetInstanceContent) {
       var updatedlistcontent = JSON.parse(gridrendercontent.content);
       updatedlistcontent.list.push({
         createdat: widgetInstanceContent.createdat,
         updatedat: widgetInstanceContent.updatedat,
         datetype: widgetInstanceContent.datetype,
         name: widgetInstanceContent.name,
-        type: widgetInstanceContent.type
+        type: widgetInstanceContent.type,
+        picture: widgetInstanceContent.picture,
       });
       if (widgetInstanceContent.updatedat !== widgetInstanceContent.createdat) {
         updateIndexlistForEditDelete(updatedlistcontent);
@@ -326,12 +317,13 @@
       }
     }
 
-    function createFrontWidgetTile(renderdata,gridrendercontent) {
+    function createFrontWidgetTile(renderdata, gridrendercontent) {
       var widgetRepresentation = document.createElement('div');
       var parsedcreatedat = new Date(parseInt(renderdata.createdat)).toLocaleDateString(jobStatics.locale, jobStatics.localeOptions);
       var parsedupdatedat = new Date(parseInt(renderdata.updatedat)).toLocaleDateString(jobStatics.locale, jobStatics.localeOptions);
       $(widgetRepresentation)
         .addClass("col-md-3 cms-boxes-outer")
+        .addClass(typeof gridrendercontent.descr !== 'undefined' ? gridrendercontent.descr.replace(/\s/g, '') : "placeholderclass")
         .append(
           $("<div/>")
           .addClass("cms-boxes-items cms-features")
@@ -339,7 +331,7 @@
             "background-color": "#ffffff",
             "border-style": "solid",
             "border-width": "2px",
-            "border-color": jobStatics.bgcolor
+            "border-color": gridrendercontent.color
           })
           .append(
             $("<div/>")
@@ -355,6 +347,10 @@
               .append(
                 $("<i/>")
                 .addClass(jobStatics.icon)
+              )
+              .append(
+                $('<img>')
+                .attr("src", renderdata.picture)
               )
               .append(
                 $("<h3/>")
@@ -378,7 +374,6 @@
     function createInnerWidgetModal(gridrendercontent) {
       var expandedWidgetView = document.createElement('div');
       var modalfooter = document.createElement('div');
-
       $(expandedWidgetView)
         .addClass("modal")
         .attr("role", "dialog")
@@ -530,8 +525,6 @@
               $(expandedWidgetView).modal('hide');
               $(expandedWidgetView).remove();
               $(makeCreateForm("edit", gridrendercontent)).modal('show');
-
-
             })
           );
       }
@@ -541,7 +534,6 @@
     function addNewButtonHandler(gridrendercontent) {
       var widgetAddButton = document.createElement('button');
       var newbuttoncontainer = document.createElement('div');
-
       $(widgetAddButton)
         .appendTo($(newbuttoncontainer))
         .addClass("btn btn-info")
@@ -574,9 +566,8 @@
             var resetmilis = request.getResponseHeader('X-RateLimit-Reset');
             var resetdate = new Date(resetmilis * 1000);
             alert("You have exceeded your limit of api calls, your limit will be refreshed: " + resetdate + "Login with your GitHub credentials if you do not want to wait");
-          }
-          else{
-          alert('That entry is no longer avaliable');
+          } else {
+            alert('That entry is no longer avaliable');
           }
         });
     }

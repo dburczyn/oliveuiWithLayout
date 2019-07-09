@@ -13,6 +13,9 @@
     var user = document.createElement('input');
     var pass = document.createElement('input');
     var url = document.createElement('input');
+    var name = document.createElement('input');
+    var descr = document.createElement('input');
+    var color = document.createElement('input');
     var type = document.createElement('select');
     var configform = document.createElement('form');
     var formelswrapper = document.createElement('div');
@@ -25,7 +28,7 @@
             }
           };
         }).get();
-        var resultjsonarray = [];
+        let resultjsonarray = [];
         titles.forEach(function (json) {
           resultjsonarray[Object.keys(json)[0] - 1] = $.extend(resultjsonarray[Object.keys(json)[0] - 1],
             (Object.values(json)[0]));
@@ -35,6 +38,9 @@
         });
         config.user = config.gridrenderconfig[0].user;
         config.pass = config.gridrenderconfig[0].pass;
+        config.admin = config.gridrenderconfig[0].admin;
+        config.name = $(name).val();
+        config.color = $(color).val();
         return config;
       },
       setContent: function (content = {}) {
@@ -47,18 +53,40 @@
           for (var i = 1; i <= content.gridrenderconfig.length; i++) {
             content.gridrenderconfig[i - 1].user = content.user;
             content.gridrenderconfig[i - 1].pass = content.pass;
+            content.gridrenderconfig[i - 1].admin = content.admin;
             $.each(content.gridrenderconfig[i - 1], function (key, val) {
               $('[name="' + key + '[' + i + ']"').val(function (index, value) {
                 return value = val;
               });
             });
           }
+          $(name).val(content.name);
+          $(color).val(content.color);
         }
       },
       render: function () {
         var returnedconfigform =
           $(configform)
           .addClass("form-style-5")
+          .append(
+            $('<p/>')
+            .text("Widget name:")
+          )
+          .append(
+            $(name)
+            .attr("type", "text")
+          )
+          .append(
+            $('<p/>')
+            .text("Widget color:")
+          )
+          .append(
+            $(color)
+            .attr("type", "color")
+          )
+          .append(
+            $('<p/>')
+          )
           .append(
             $('<div/>')
             .addClass("isiaFormRepeater repeat-section")
@@ -111,7 +139,18 @@
                   .addClass("repeat-el")
                   .attr("type", "text")
                   .attr("name", "indexfilename[1]")
-                ).append(
+                )
+                .append(
+                  $('<p/>')
+                  .text("Repo name (for filtering):")
+                )
+                .append(
+                  $(descr)
+                  .addClass("repeat-el")
+                  .attr("type", "text")
+                  .attr("name", "descr[1]")
+                )
+                .append(
                   $('<p/>')
                   .text("Widget type:")
                 ))));

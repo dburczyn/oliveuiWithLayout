@@ -12,15 +12,16 @@
       var widgetcontainer = document.createElement('div');
       var widgetcontainerinner = document.createElement('div');
       var grid = {
-        type: "Grid",
+        type: "Multirepo Grid",
         render: function (config) {
           resultsJSON = [];
           for (var jj = 0; jj < config.gridrenderconfig.length; jj++) {
             resultsJSON = [];
             let gridrendercontent = config.gridrenderconfig[jj];
-
-
+            gridrendercontent.color = config.color;
             if (typeof gridrendercontent.indexurl !== 'undefined' && typeof gridrendercontent.indexfilename !== 'undefined' && gridrendercontent.indexurl !== '' && gridrendercontent.indexfilename !== '') {
+              console.log("ajax");
+              console.log(gridrendercontent);
               var getDataAjax = $.ajax({
                   url: gridrendercontent.indexurl + "/" + gridrendercontent.indexfilename,
                   beforeSend: function (xhr) {
@@ -34,17 +35,16 @@
                   gridrendercontent.listsha = response.sha;
                   resultsJSON = [];
                   produceWidgetContent.call(null, response);
-                  addWidgetContainer();
+                  addWidgetContainer(gridrendercontent.descr);
                   instantiateWidgets(gridrendercontent);
                 })
                 .fail(function (jqXHR, textStatus, errorThrown) {
                   if (jqXHR.status == '404') {
-                    alert("didnt find existing indexlist, creating new if proper authorization provided...");
+                    alert("didnt find existing indexlist");
                     resultsJSON = [];
                     var response = {};
                     response.content = btoa('{"list":[],"ignoredlist":[]}');
                     produceWidgetContent.call(null, response);
-                    cleanupIndexlist(gridrendercontent);
                   }
                   if (jqXHR.getResponseHeader('X-RateLimit-Remaining') == 0) {
                     var resetmilis = jqXHR.getResponseHeader('X-RateLimit-Reset');
@@ -84,9 +84,21 @@
         }
       }
 
-      function addWidgetContainer() {
+      function addWidgetContainer(descr) {
         $(widgetcontainer)
           .addClass("container")
+          .prepend($("<button/>")
+            .addClass("filterbuttonrow")
+            .addClass("button")
+            .addClass("btn-primary")
+            .text(descr)
+            .click(function () {
+              $(this).text(function (i, v) {
+                $("." + descr.replace(/\s/g, '')).toggle();
+                return v === descr ? descr + " hidden" : descr;
+              });
+            })
+          )
           .append(
             $("<section/>")
             .addClass("cms-boxes")
@@ -112,7 +124,6 @@
           );
         });
       }
-
       return grid;
     };
     OliveUI.modules.new_brokerage_object_grid_widget_js_modules = [];

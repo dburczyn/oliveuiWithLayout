@@ -207,12 +207,12 @@ img {
 
 .lm_header,
 .lm_header .lm_tab {
-  background: -webkit-linear-gradient(#6DD5FA, #2980B9);
+background: #E1E1E1;
   /*background: url(http://subtlepatterns.com/patterns/p2.png);*/
 }
 
 .lm_splitter {
-  background: -webkit-linear-gradient(#FFFFFF, #6DD5FA);
+ 
 }
 
 .lm_header {
@@ -309,8 +309,6 @@ img {
 
 .lm_content {
 
-  border: solid 1px blue;
-
 }
 
 
@@ -357,4 +355,44 @@ li a:hover {
   margin: 0 0 0;
   text-transform: uppercase;
   padding: 8px
+}
+
+.pure-button {
+margin-left: 15px;
+margin-bottom: 15px;
+}
+
+i{
+margin-left: 15px;
+margin-bottom: 15px;
+margin-top: 15px;
+}
+
+img{
+margin-left: 15px;
+margin-bottom: 15px;
+margin-top: 15px;
+}
+
+
+.small-box > img, .small-box > i {
+  display: inline-block;
+width:40%;
+}
+
+
+.modal-header > img{
+    display: block;
+  margin-left: auto;
+  margin-right: auto; 
+}
+
+
+
+.filterbuttonrow {
+  display: inline-block;
+margin-left: 15px;
+margin-bottom: 15px;
+margin-top: 15px;
+
 }

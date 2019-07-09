@@ -249,7 +249,9 @@
               updatedat: unencodedcontentdiff.updatedat,
               datetype: unencodedcontentdiff.datetype,
               name: unencodedcontentdiff.name,
-              type: unencodedcontentdiff.type
+              type: unencodedcontentdiff.type,
+              picture: unencodedcontentdiff.picture
+
             });
           } else if (indexListobjToUpdate.ignoredlist.indexOf(response.name) == -1) {
             indexListobjToUpdate.ignoredlist.push(response.name);

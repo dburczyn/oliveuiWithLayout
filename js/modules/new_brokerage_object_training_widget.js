@@ -3,26 +3,25 @@
     config.height = config.minHeight || 100;
     'use strict';
     var trainingStatics = {
-        bgcolor: "#c5dee7",
-        icon: "fas fa-chalkboard-teacher fa-3x",
-        localeOptions: {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric'
-        },
-        locale: "en-GB"
-      };
+      bgcolor: "#c5dee7",
+      icon: "fas fa-chalkboard-teacher fa-3x",
+      localeOptions: {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+      },
+      locale: "en-GB"
+    };
     var currentresponse;
     var unencodedcontent;
-
     var returned = {
       type: "TrainingTile",
       render: function (renderdata, gridrendercontent) {
-        return createFrontWidgetTile(renderdata,gridrendercontent);
+        return createFrontWidgetTile(renderdata, gridrendercontent);
       },
       makeCreateButton: function (gridrendercontent) {
         return addNewButtonHandler(gridrendercontent);
@@ -39,7 +38,6 @@
       widgetInstanceContent.type = returned.type;
       widgetInstanceContent.name = $(createform).find($('input[name="filenamefield"]')).val();
       widgetInstanceContent.datetype = $(createform).find($('input[name="datefield"]')).val();
-
       return widgetInstanceContent;
     }
 
@@ -55,8 +53,6 @@
       var updatedatfield = document.createElement('input');
       var filenamefield = document.createElement('input');
       var datefield = document.createElement('input');
-
-
       $(createform)
         .addClass("modal")
         .attr("role", "dialog")
@@ -120,7 +116,6 @@
                   $(filenamefield)
                   .attr("type", "text")
                   .attr("name", "filenamefield")
-
                 )
                 .append(
                   $('<p/>')
@@ -154,9 +149,9 @@
                   .text("Event Date:")
                 )
                 .append(
-                    $(datefield)
-                    .attr("type", "date")
-                    .attr("name", "datefield")
+                  $(datefield)
+                  .attr("type", "date")
+                  .attr("name", "datefield")
                 )
                 .append(
                   $('<input>')
@@ -182,9 +177,7 @@
               )
             )
           ));
-
       if (edit === 'edit') {
-
         var updatedat = new Date().getTime();
         $(updatedatfield).val(updatedat);
         $(createdatfield).val(unencodedcontent.createdat);
@@ -193,10 +186,8 @@
         $(emailaddressfield).val(unencodedcontent.email);
         $(trainingpicturefield).val(unencodedcontent.picture);
         $(datefield).val(unencodedcontent.datetype);
-
       }
       return createform;
-
     }
 
     function deleteWidgetContentFile(gridrendercontent) {
@@ -214,7 +205,7 @@
     }
 
     function createWidgetContentFile(gridrendercontent, createform) {
-      var widgetInstanceContent =produceWidgetInstanceContent(createform);
+      var widgetInstanceContent = produceWidgetInstanceContent(createform);
       $.ajax({
           url: gridrendercontent.indexurl + '/' + widgetInstanceContent.updatedat,
           beforeSend: function (xhr) {
@@ -226,18 +217,19 @@
         .done(function () {
           $(createform).modal('hide');
           $(createform).remove();
-          updateIndexlist(gridrendercontent,widgetInstanceContent);
+          updateIndexlist(gridrendercontent, widgetInstanceContent);
         });
     }
 
-    function updateIndexlist(gridrendercontent,widgetInstanceContent) {
+    function updateIndexlist(gridrendercontent, widgetInstanceContent) {
       var updatedlistcontent = JSON.parse(gridrendercontent.content);
       updatedlistcontent.list.push({
         createdat: widgetInstanceContent.createdat,
         updatedat: widgetInstanceContent.updatedat,
         datetype: widgetInstanceContent.datetype,
         name: widgetInstanceContent.name,
-        type: widgetInstanceContent.type
+        type: widgetInstanceContent.type,
+        picture: widgetInstanceContent.picture
       });
       if (widgetInstanceContent.updatedat !== widgetInstanceContent.createdat) {
         updateIndexlistForEditDelete(updatedlistcontent);
@@ -269,12 +261,13 @@
       }
     }
 
-    function createFrontWidgetTile(renderdata,gridrendercontent) {
+    function createFrontWidgetTile(renderdata, gridrendercontent) {
       var widgetRepresentation = document.createElement('div');
       var parsedcreatedat = new Date(parseInt(renderdata.createdat)).toLocaleDateString(trainingStatics.locale, trainingStatics.localeOptions);
       var parsedupdatedat = new Date(parseInt(renderdata.updatedat)).toLocaleDateString(trainingStatics.locale, trainingStatics.localeOptions);
       $(widgetRepresentation)
         .addClass("col-md-3 cms-boxes-outer")
+        .addClass(typeof gridrendercontent.descr !== 'undefined' ? gridrendercontent.descr.replace(/\s/g, '') : "placeholderclass")
         .append(
           $("<div/>")
           .addClass("cms-boxes-items cms-features")
@@ -282,7 +275,7 @@
             "background-color": "#ffffff",
             "border-style": "solid",
             "border-width": "2px",
-            "border-color": trainingStatics.bgcolor
+            "border-color": gridrendercontent.color
           })
           .append(
             $("<div/>")
@@ -298,6 +291,10 @@
               .append(
                 $("<i/>")
                 .addClass(trainingStatics.icon)
+              )
+              .append(
+                $('<img>')
+                .attr("src", renderdata.picture)
               )
               .append(
                 $("<h3/>")
@@ -322,7 +319,6 @@
     function createInnerWidgetModal(gridrendercontent) {
       var expandedWidgetView = document.createElement('div');
       var modalfooter = document.createElement('div');
-
       $(expandedWidgetView)
         .addClass("modal")
         .attr("role", "dialog")
@@ -474,8 +470,6 @@
               $(expandedWidgetView).modal('hide');
               $(expandedWidgetView).remove();
               $(makeCreateForm("edit", gridrendercontent)).modal('show');
-
-
             })
           );
       }
@@ -485,7 +479,6 @@
     function addNewButtonHandler(gridrendercontent) {
       var widgetAddButton = document.createElement('button');
       var newbuttoncontainer = document.createElement('div');
-
       $(widgetAddButton)
         .appendTo($(newbuttoncontainer))
         .addClass("btn btn-info")
@@ -518,9 +511,8 @@
             var resetmilis = request.getResponseHeader('X-RateLimit-Reset');
             var resetdate = new Date(resetmilis * 1000);
             alert("You have exceeded your limit of api calls, your limit will be refreshed: " + resetdate + "Login with your GitHub credentials if you do not want to wait");
-          }
-          else{
-          alert('That entry is no longer avaliable');
+          } else {
+            alert('That entry is no longer avaliable');
           }
         });
     }
